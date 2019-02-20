@@ -1,9 +1,8 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>操作流水记录</title>
+    <title>活跃度排名</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <script src="js/jquery-3.2.1.js"></script>
     <script src="js/bootstrap.min.js" ></script>
@@ -52,6 +51,10 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="opList.html">操作流水记录</a></li>
+                        <li class="divider"></li>
+                        <li><a href="acList.html">活跃度排名</a></li>
+                        <li class="divider"></li>
+                        <li><a href="keywordList.html">关键词排名</a></li>
                     </ul>
                 </li>
                 <li >
@@ -70,7 +73,7 @@
 
 
 <div style="padding: 70px 550px 10px">
-    <form   method="post" action="queryoperater.html" class="form-inline"  id="searchform">
+    <form   method="post" action="queryactive.html" class="form-inline"  id="searchform">
         <div class="input-group">
             <input type="text" placeholder="输入用户ID" class="form-control" id="search" name="searchWord" class="form-control">
             <span class="input-group-btn">
@@ -78,7 +81,17 @@
             </span>
         </div>
     </form>
-    <script>
+    <from >
+        <div  id="choose" class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-secondary active">
+                <input  type="radio" name="options" value="desc" id="option1" autocomplete="off" checked="true" > 降序
+            </label>
+            <label class="btn btn-secondary">
+                <input type="radio" name="options"  value="asc" id="option2" autocomplete="off"> 升序
+            </label>
+        </div>
+    </from>
+    <script type="text/javascript">
         function mySubmit(flag){
             return flag;
         }
@@ -88,8 +101,20 @@
                 alert("请输入关键字");
                 return mySubmit(false);
             }
-        })
+        });
 
+        // $("input[name=options]").click(function() {
+        //     var op = $("input[name=options]:checked").val();
+        //     alert(op);
+        // });
+        $('#choose label').click(function() {
+            $(this).children("input").prop("checked",true);
+
+
+
+            // TODO: insert whatever you want to do with $(this) here
+        });
+            //window.location.href = "acList.html";
     </script>
 </div>
 <div style="position: relative;top: 10%">
@@ -115,50 +140,34 @@
 <div class="panel panel-default" style="width: 90%;margin-left: 5%">
     <div class="panel-heading">
         <h3 class="panel-title">
-            操作流水记录
+            活跃度排名
         </h3>
     </div>
     <div class="panel-body">
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>编号</th>
+                <th>排名</th>
                 <th>用户ID</th>
-                <th>开始聊天时间</th>
-                <th>结束聊天时间</th>
-                <th>文件名</th>
+                <th>聊天次数</th>
                 <th>删除</th>
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${list}" var="alog">
+            <c:forEach items="${list}" var="alog" varStatus="s">
                 <tr  v-for="alog in list">
-                    <td><c:out value="${alog.operatorId}"></c:out></td>
+                    <%--<td><c:out value="${alog.activeId}"></c:out></td>--%>
+                    <td>${s.count}</td>
                     <td><c:out value="${alog.userId}"></c:out></td>
-                    <td><c:out value="${alog.startTime}"></c:out></td>
-                    <td><c:out value="${alog.endTime}"></c:out></td>
-                    <td>
-                        <a  name="fileName" href="openfile.html?fileName=<c:out value="${alog.fileName}"></c:out>">
-                            <c:out value="${alog.fileName}"></c:out>
-                        </a>
-                        <%--<a id="openfile" type="submit" href="#"><c:out value="${alog.fileName}"></c:out></a>--%>
-                    </td>
-                    <td><a href="deleteop.html?operatorId=<c:out value="${alog.operatorId}"></c:out>"><button type="button" class="btn btn-danger btn-xs">删除</button></a></td>
+                    <td><c:out value="${alog.actionTime}"></c:out></td>
+                    <td><a href="deleteac.html?userId=<c:out value="${alog.userId}"></c:out>"><button type="button" class="btn btn-danger btn-xs">删除</button></a></td>
                 </tr>
             </c:forEach>
             </tbody>
         </table>
-        <%--<script>--%>
-            <%--$("#openfile").click(function () {--%>
-                <%--<c:if test= "${!empty filecontent}">--%>
-                <%--$("#myfile").hidden = false--%>
-                <%--</c:if>--%>
-            <%--});--%>
-        <%--</script>--%>
     </div>
 </div>
 
-<%--<textarea   id="myfile"  cols="80" rows="20" name="filecontent" hidden="true">    ${filecontent}</textarea>--%>
 
 
 

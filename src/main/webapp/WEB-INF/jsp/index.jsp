@@ -9,7 +9,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>图书馆首页</title>
+    <title>小莫机器人后台系统首页</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <script src="js/jquery-3.2.1.js"></script>
     <script src="js/bootstrap.min.js" ></script>
@@ -52,7 +52,7 @@
             window.location.href="login.html";
 </script>
 </c:if>
-<h2 style="text-align: center;font-family: 'Adobe 楷体 Std R';color: palevioletred">图 书 馆</h2>
+<h2 style="text-align: center;font-family: 'Adobe 楷体 Std R';color: palevioletred">小莫机器人后台</h2>
 <div style="float:right;" id="github_iframe"></div>
 <script>
     /**
@@ -282,7 +282,8 @@
                             $("#info").text("提示:账号或密码错误！");
                         } else if(data.stateCode.trim() == "1") {
                             $("#info").text("提示:登陆成功，跳转中...");
-                            window.location.href="admin_main.html";
+                             window.location.href="admin_main.html";
+                            //window.location.href="operatorList.html";
                         }
                     }
                 });

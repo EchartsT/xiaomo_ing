@@ -27,19 +27,19 @@
 <nav  style="position:fixed;z-index: 999;width: 100%;background-color: #fff" class="navbar navbar-default" role="navigation" >
     <div class="container-fluid">
         <div class="navbar-header" style="margin-left: 8%;margin-right: 1%">
-            <a class="navbar-brand" href="admin_main.html">图书管理系统</a>
+            <a class="navbar-brand" href="admin_main.html">小莫机器人后台系统</a>
         </div>
         <div class="collapse navbar-collapse" >
             <ul class="nav navbar-nav navbar-left">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        图书管理
+                        管理员管理
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="allbooks.html">全部图书</a></li>
+                        <li><a href="allbooks.html">管理员列表</a></li>
                         <li class="divider"></li>
-                        <li><a href="book_add.html">增加图书</a></li>
+                        <li><a href="book_add.html">增加管理员</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -55,11 +55,15 @@
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        操作管理
+                        聊天信息管理
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="lendlist.html">操作流水记录</a></li>
+                        <li><a href="opList.html">操作流水记录</a></li>
+                        <li class="divider"></li>
+                        <li><a href="acList.html">活跃度排名</a></li>
+                        <li class="divider"></li>
+                        <li><a href="keywordList.html">关键词排名</a></li>
                     </ul>
                 </li>
                 <li >

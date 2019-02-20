@@ -1,19 +1,30 @@
 package com.book.service;
 
+
+import com.book.dao.OperatorDao;
+import com.book.domain.Oprecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.expression.spel.ast.Operator;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+
+@Service
 public class OperatorService {
-    private OperatorService operatorService;
+    private OperatorDao operatorDao;
+
     @Autowired
-    public void setOperatorService(OperatorService operatorService) {
-        this.operatorService = operatorService;
+    public void setOpDao(OperatorDao operatorDao){
+        this.operatorDao=operatorDao;
     }
-    private UserService userService;
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public ArrayList<Oprecord> opList(){
+        return operatorDao.opList();
+    }
+    public int deleteopList(String operatorId ){
+        return operatorDao.deleteopList(operatorId);
+    }
+
+    public ArrayList<Oprecord> matchOP(String searchWord){
+        return operatorDao.matchOP(searchWord);
     }
 }
