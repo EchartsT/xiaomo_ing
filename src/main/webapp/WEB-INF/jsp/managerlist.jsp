@@ -154,10 +154,9 @@
                     <td><c:out value="${alog.managerName}"></c:out></td>
                     <td><c:out value="${alog.managerPwd}"></c:out></td>
                     <td><c:out value="${alog.managerStatus}"></c:out></td>
-
                     <td>
                         <a href="deletemanager.html?managerId=<c:out value="${alog.managerId}"></c:out>"><button type="button" class="btn btn-danger btn-xs">删除</button></a>
-                        <a href="updatemanager_info.html?manangerId=<c:out value="${alog.managerId}"></c:out>"><button type="button" class="btn btn-info btn-xs">修改</button></a>
+                        <a href="updatemanager_info.html?managerId=<c:out value="${alog.managerId}"></c:out>"><button type="button" class="btn btn-info btn-xs">修改</button></a>
                     </td>
                 </tr>
             </c:forEach>

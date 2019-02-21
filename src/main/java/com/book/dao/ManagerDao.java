@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Repository
 public class ManagerDao {
@@ -30,6 +32,7 @@ public class ManagerDao {
     private final static String Manager_DELETE_SQL="DELETE from manager where managerId= ? ";
     private final static String GET_MA_SQL="SELECT * FROM manager where managerName = ? ";
     private final static String EDIT_MANAGER_SQL="update manager set  managerName = ? ,managerPwd = ?,managerStatus=? where managerId=?";
+    private final static String ADD_MANAGER="INSERT INTO manager ( managerId, managerName,managerPwd,managerStatus )VALUES ( ?,?,?,? );";
 
     public int getMatchCount(String managerId,String password){
         return jdbcTemplate.queryForObject(MATCH_ADMIN_SQL,new Object[]{managerId,password},Integer.class);
@@ -43,16 +46,26 @@ public class ManagerDao {
                 resultSet.beforeFirst();
                 while (resultSet.next()){
                     Manager ma=new Manager();
-                    ma.setManagerId(resultSet.getString("managerId"));
-                    ma.setManagerName(resultSet.getString("managerName"));
-                    ma.setManagerPwd(resultSet.getString("managerPwd"));
-                    ma.setManagerStatus(resultSet.getString("managerStatus"));
+                    ma.setManagerId(replaceBlank(resultSet.getString("managerId")));
+                    ma.setManagerName(replaceBlank(resultSet.getString("managerName")));
+                    ma.setManagerPwd(replaceBlank(resultSet.getString("managerPwd")));
+                    ma.setManagerStatus(replaceBlank(resultSet.getString("managerStatus")));
                     list.add(ma);
                 }
             }
         });
         return list;
 
+    }
+    //去掉回车空格。。
+    public String replaceBlank(String str){
+        String dest = "";
+        if (str!=null) {
+            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+            Matcher m = p.matcher(str);
+            dest = m.replaceAll("");
+        }
+        return dest;
     }
 
     public int rePassword(int managerId,String newPasswd){
@@ -106,6 +119,15 @@ public class ManagerDao {
         String managerPwd = manager.getManagerPwd();
         String managerStatus = manager.getManagerStatus();
         return jdbcTemplate.update(EDIT_MANAGER_SQL,new Object[]{managerName,managerPwd,managerStatus,managerId});
+    }
+
+
+    public int addManager(Manager manager){
+        String managerId = manager.getManagerId();
+        String managerName = manager.getManagerName();
+        String managerPwd = manager.getManagerPwd();
+        String managerStatus = manager.getManagerStatus();
+        return jdbcTemplate.update(ADD_MANAGER,new Object[]{managerId,managerName,managerPwd,managerStatus});
     }
 
 }
