@@ -1,6 +1,7 @@
 package com.book.web;
 
 import com.book.domain.Admin;
+import com.book.domain.Manager;
 import com.book.domain.ReaderCard;
 import com.book.domain.ReaderInfo;
 import com.book.service.LoginService;
@@ -46,7 +47,8 @@ public class LoginController {
     //请求参数会根据参数名称默认契约自动绑定到相应方法的入参中
     @RequestMapping(value = "api/loginCheck", method = RequestMethod.POST)
     public @ResponseBody Object loginCheck(HttpServletRequest request){
-        int id=Integer.parseInt(request.getParameter("id"));
+        //int id=Integer.parseInt(request.getParameter("id"));
+        String id =request.getParameter("id");
         String passwd = request.getParameter("passwd");
         boolean isAdmin = loginService.hasMatchManager(id, passwd);
         HashMap<String, String> res = new HashMap<String, String>();
@@ -54,10 +56,10 @@ public class LoginController {
                     res.put("stateCode", "0");
                     res.put("msg","账号或密码错误！");
                 } else if(isAdmin){
-                    Admin admin=new Admin();
-                    admin.setAdminId(id);
-                    admin.setPassword(passwd);
-                    request.getSession().setAttribute("admin",admin);
+                    Manager manager= new Manager();
+                    manager.setManagerId(id);
+                    manager.setManagerPwd(passwd);
+                    request.getSession().setAttribute("admin",manager);
                     res.put("stateCode", "1");
                     res.put("msg","管理员登录成功！");
                 }

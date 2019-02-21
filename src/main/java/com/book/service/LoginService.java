@@ -20,7 +20,7 @@ public class LoginService {
     public void setManagerDao(ManagerDao managerDao) {
         this.managerDao = managerDao;
     }
-    public boolean hasMatchManager(int adminId,String password){
+    public boolean hasMatchManager(String adminId,String password){
         return managerDao.getMatchCount(adminId,password)==1;
     }
     //重置管理员密码
