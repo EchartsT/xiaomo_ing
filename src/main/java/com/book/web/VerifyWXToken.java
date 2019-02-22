@@ -2,20 +2,23 @@ package com.book.web;
 
 import com.book.domain.SendTextMessage;
 import com.book.domain.Text;
+
+import com.book.util.FileUtil;
 import com.book.util.SignUtil;
 import com.book.util.MessageUtil;
 import com.book.domain.TextMessage;
 import com.book.service.WeixinService;
+
+import net.sf.json.JSONObject;
 import org.dom4j.DocumentException;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -24,7 +27,7 @@ import java.util.Map;
  *
  */
 
-public class verifyWXToken extends HttpServlet {
+public class VerifyWXToken extends HttpServlet {
     /**
      * 确认请求来自微信服务器
      */
@@ -46,6 +49,11 @@ public class verifyWXToken extends HttpServlet {
         }
         out.close();
     }
+
+    public static void extract(String eventType){
+
+    }
+
 
     /**
      * 处理微信服务器发来的消息
@@ -70,20 +78,18 @@ public class verifyWXToken extends HttpServlet {
             String line;
             String lines = "";
             String message = null;
-            String userInfo = null;
 
             WeixinService sms=new WeixinService();
+            JSONObject userInfo= sms.getUserInfo(accessToken,fromUserName);
 
             //判断是否为事件类型
             if(MessageUtil.MSGTYPE_EVENT.equals(msgType)){
                 if(MessageUtil.MESSAGE_SUBSCIBE.equals(eventType)){//处理订阅事件
-
-                    userInfo = sms.getUserInfo(accessToken,fromUserName);
-                    System.out.println(userInfo);
+                    FileUtil.writeUserFile(userInfo.toString());
 
                 }else if(MessageUtil.MESSAGE_UNSUBSCIBE.equals(eventType)){//处理取消订阅事件
-                    userInfo = sms.getUserInfo(accessToken,fromUserName);
-                    System.out.println(userInfo);
+                    FileUtil.writeUserFile(userInfo.toString());
+
                 }
             }
 

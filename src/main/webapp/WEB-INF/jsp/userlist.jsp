@@ -9,7 +9,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>管理员列表</title>
+    <title>用户列表</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <script src="js/jquery-3.2.1.js"></script>
     <script src="js/bootstrap.min.js" ></script>
@@ -55,8 +55,8 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a href="userlist.html">用户列表</a></li>
-                </ul>
+                        <li><a href="userlist.html">用户列表</a></li>
+                    </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -86,9 +86,9 @@
 </nav>
 
 <div style="padding: 70px 550px 10px">
-    <form   method="post" action="/querymanager.html" class="form-inline"  id="searchform">
+    <form   method="post" action="queryUser.html" class="form-inline"  id="searchform">
         <div class="input-group">
-            <input type="text" placeholder="输入管理员ID" class="form-control" id="search" name="searchWord" class="form-control">
+            <input type="text" placeholder="输入用户昵称" class="form-control" id="search" name="userName" class="form-control">
             <span class="input-group-btn">
                             <input type="submit" value="搜索" class="btn btn-default">
             </span>
@@ -131,31 +131,31 @@
 <div class="panel panel-default" style="width: 90%;margin-left: 5%">
     <div class="panel-heading">
         <h3 class="panel-title">
-            管理员列表
+            用户列表
         </h3>
     </div>
     <div class="panel-body">
         <table class="table table-hover">
             <thead>
             <tr>
-                <th>管理员ID</th>
-                <th>管理员姓名</th>
-                <th>登录密码</th>
-                <th>管理员状态</th>
-                <th>删除</th>
+                <th>用户编号</th>
+                <th>用户标识id</th>
+                <th>用户昵称</th>
+                <th>聊天文件</th>
+                <th>订阅状态</th>
+                <th>删除操作</th>
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${list}" var="alog">
-                <tr  v-for="alog in list">
-                    <td><c:out value="${alog.managerId}"></c:out></td>
-                    <td><c:out value="${alog.managerName}"></c:out></td>
-                    <td><c:out value="${alog.managerPwd}"></c:out></td>
-                    <td><c:out value="${alog.managerStatus}"></c:out></td>
-
+            <c:forEach items="${users}" var="alog">
+                <tr  v-for="alog in users">
+                    <td><c:out value="${alog.userId}"></c:out></td>
+                    <td><c:out value="${alog.userOpenId}"></c:out></td>
+                    <td><c:out value="${alog.userName}"></c:out></td>
+                    <td><c:out value="${alog.chatData}"></c:out></td>
+                    <td><c:out value="${alog.isSubscribe}"></c:out></td>
                     <td>
-                        <a href="deletemanager.html?managerId=<c:out value="${alog.managerId}"></c:out>"><button type="button" class="btn btn-danger btn-xs">删除</button></a>
-                        <a href="updatemanager_info.html?manangerId=<c:out value="${alog.managerId}"></c:out>"><button type="button" class="btn btn-info btn-xs">修改</button></a>
+                        <a href="deleteUser.html?userId=<c:out value="${alog.userId}"></c:out>"><button type="button" class="btn btn-danger btn-xs">删除</button></a>
                     </td>
                 </tr>
             </c:forEach>

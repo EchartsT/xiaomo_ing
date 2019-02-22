@@ -48,9 +48,7 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="allreaders.html">用户信息</a></li>
-                        <li class="divider"></li>
-                        <li><a href="reader_add.html">增加读者</a></li>
+                        <li><a href="userlist.html">用户列表</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

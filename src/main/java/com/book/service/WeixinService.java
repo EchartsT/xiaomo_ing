@@ -33,10 +33,10 @@ public class WeixinService {
      * @param opendID  用户的openId，这个通过当用户进行了消息交互的时候，才有
      * @return
      */
-    public static String getUserInfo(String accessToken, String opendID){
+    public static JSONObject getUserInfo(String accessToken, String opendID){
         String url = getUserInfo_url.replace("ACCESS_TOKEN" , accessToken);
         url = url.replace("OPENID" ,opendID);
         JSONObject jsonObject = WeiXinUtil.doGetStr(url);
-        return jsonObject.toString();
+        return jsonObject;
     }
 }

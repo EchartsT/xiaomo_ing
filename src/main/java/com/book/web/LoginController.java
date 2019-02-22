@@ -5,6 +5,7 @@ import com.book.domain.Manager;
 import com.book.domain.ReaderCard;
 import com.book.domain.ReaderInfo;
 import com.book.service.LoginService;
+import com.book.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,6 @@ import java.util.HashMap;
 public class LoginController {
 
     private LoginService loginService;
-
 
     @Autowired
     public void setLoginService(LoginService loginService) {
