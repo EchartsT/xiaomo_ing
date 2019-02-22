@@ -17,11 +17,12 @@
           p:driverClassName="com.mysql.jdbc.Driver"
           p:url="jdbc:mysql://localhost:3306/xiaomo_chatbot"
             p:username="root"
-          p:password="123456"/>
+          p:password="136wswm"/>
     <!-- 定义JDBC模板Bean   -->
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"
           p:dataSource-ref="dataSource"/>
 
+    <bean id="SpringApplicationContext" class="com.book.util.ApplicationContextHelper"></bean>
 
 </beans>
         <!--p:url="jdbc:mysql://localhost:3306/library"-->
