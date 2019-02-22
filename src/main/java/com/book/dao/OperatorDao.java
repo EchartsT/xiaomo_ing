@@ -21,7 +21,7 @@ public class OperatorDao {
     private final static String Oprecord_LIST_SQL="SELECT * FROM oprecord";
     private final static String Oprecord_DELETE_SQL="delete from oprecord where operatorId = ? ";
     private final static String GET_OP_SQL="SELECT * FROM oprecord where userId = ? ";
-    private final static String ADD_Oprecord_SQL="INSERT INTO oprecord VALUES(?,?,?,NULL,NULL,NULL)";
+    private final static String ADD_Oprecord_SQL="INSERT INTO oprecord (operatorId,userId,startTime,fileName) VALUES(?,?,?,?)";
     private final static String UPDATE_Oprecord_SQL="UPDATE oprecord SET endTime = ? WHERE userId = ?";
 
     @Autowired
@@ -72,10 +72,10 @@ public class OperatorDao {
     public int addOprecord(Oprecord oprecord){
         String userId=oprecord.getUserId();
         String operatorId = oprecord.getOperatorId();
-        Timestamp startTime=java.sql.Timestamp.valueOf(oprecord.getStartTime());
+        Timestamp startTime=java.sql.Timestamp.valueOf(oprecord.getEndTime());
         String fileName = oprecord.getFileName();
 
-        return jdbcTemplate.update(ADD_Oprecord_SQL,new Object[]{operatorId,userId,fileName});
+        return jdbcTemplate.update(ADD_Oprecord_SQL,new Object[]{operatorId,userId,startTime,fileName});
     }
 
     public int updateOprecord(Oprecord oprecord){
