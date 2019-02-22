@@ -27,4 +27,25 @@ public class OperatorService {
     public ArrayList<Oprecord> matchOP(String searchWord){
         return operatorDao.matchOP(searchWord);
     }
+
+    public boolean addOprecord(Oprecord oprecord){
+        return operatorDao.addOprecord(oprecord)>0;
+    }
+    public boolean updateOprecord(Oprecord oprecord){
+        return operatorDao.updateOprecord(oprecord)>0;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,24 +1,25 @@
 package com.book.web;
 
+import com.book.domain.Oprecord;
 import com.book.domain.SendTextMessage;
 import com.book.domain.Text;
-
-import com.book.util.FileUtil;
+import com.book.service.OperatorService;
 import com.book.util.SignUtil;
 import com.book.util.MessageUtil;
 import com.book.domain.TextMessage;
 import com.book.service.WeixinService;
-
 import net.sf.json.JSONObject;
 import org.dom4j.DocumentException;
-
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ import java.util.Map;
  *
  */
 
-public class VerifyWXToken extends HttpServlet {
+public class verifyWXToken extends HttpServlet {
     /**
      * 确认请求来自微信服务器
      */
@@ -50,11 +51,6 @@ public class VerifyWXToken extends HttpServlet {
         out.close();
     }
 
-    public static void extract(String eventType){
-
-    }
-
-
     /**
      * 处理微信服务器发来的消息
      */
@@ -63,7 +59,7 @@ public class VerifyWXToken extends HttpServlet {
         request.setCharacterEncoding("UTF-8");//转换编码方式
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();//通过PrintWriter返回消息至微信后台
-        String accessToken = "18_nywy_oBnKxV6n4OB5QL376OkofijmkU1yfG8RoZh3cnnrYlxV9liFhxc2MvGyvZWqtNqhOMu__O645LTFhrxel1GM-U1f65o37PUFcLdbexfVoL8U-Q7rI4eyvHpR2EWRHNLSXYHsp6WuHkoIOCgAHAMSG";
+        String accessToken = "18_9PKcsIXLzIZ-CSsyMsgkU7qfO0-zelaZhWgLPu7PDqD6VBUx-_AO0zSDdBvgZYYK-siQ7YDyIqbvdZFSQydP_eiamgWsWRdiHYvIpolRCsFw4Idd8xOg3TeOCXUhPcX1VvFWhNDpTdTC5QMBQQGhAIAFFV";
 
         //接收消息
         try {
@@ -78,18 +74,38 @@ public class VerifyWXToken extends HttpServlet {
             String line;
             String lines = "";
             String message = null;
+            JSONObject userInfo = null;
 
-            WeixinService sms=new WeixinService();
-            JSONObject userInfo= sms.getUserInfo(accessToken,fromUserName);
+            //获取当前系统时间作为用户发送消息时间
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            String askTime = df.format(new Date());
+
+            WeixinService weixinService=new WeixinService();
+            OperatorService operatorService = new OperatorService();
+            Oprecord oprecord = new Oprecord();
 
             //判断是否为事件类型
             if(MessageUtil.MSGTYPE_EVENT.equals(msgType)){
                 if(MessageUtil.MESSAGE_SUBSCIBE.equals(eventType)){//处理订阅事件
-                    FileUtil.writeUserFile(userInfo.toString());
+
+                    //获取用户信息（openID，昵称，订阅状态）
+                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
+                    System.out.println(userInfo);
+
+                    //创建txt文件用于存储聊天记录
+                    weixinService.createTxtFile(fromUserName);
+
+                    //在oprecord表（操作流水记录表）中插入一条记录用于记录该微信用户的流水
+                    oprecord.setUserId(fromUserName);
+                    oprecord.setOperatorId(fromUserName+askTime);
+                    oprecord.setStartTime(askTime);
+                    oprecord.setFileName("D:/" + fromUserName + ".txt");
+                    operatorService.addOprecord(oprecord);
+                    System.out.println(1);
 
                 }else if(MessageUtil.MESSAGE_UNSUBSCIBE.equals(eventType)){//处理取消订阅事件
-                    FileUtil.writeUserFile(userInfo.toString());
-
+                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
+                    System.out.println(userInfo);
                 }
             }
 
@@ -113,9 +129,9 @@ public class VerifyWXToken extends HttpServlet {
 
             //执行python脚本———聊天
             Process proc;
-            //String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_knowledge_ask&answer.py",content};
+            String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_knowledge_ask&answer.py",content};
             //String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
-            String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
+            //String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
             proc = Runtime.getRuntime().exec(args);
 
             //使用缓冲流接受程序返回的结果
@@ -158,7 +174,21 @@ public class VerifyWXToken extends HttpServlet {
             //System.out.println("accessToken:"+accessToken);
 
             //3.发送消息：调用业务类，发送消息
-            sms.sendMessage(accessToken, sendtextmessage);
+            weixinService.sendMessage(accessToken, sendtextmessage);
+
+            //获取当前系统时间作为回答时间
+            String answerTime = df.format(new Date());
+
+            //将本轮对话存入TXT文件
+            String filename = "D:/" + fromUserName + ".txt";
+            String data = askTime + "  " + content + "\r\n" + answerTime + " " + lines+ "\r\n";
+            weixinService.writeChatInfo(filename, data);
+
+            //在oprecord表（操作流水记录表）中的更新相应记录
+            oprecord.setUserId(fromUserName);
+            oprecord.setEndTime(answerTime);
+            operatorService.updateOprecord(oprecord);
+            System.out.println(1);
 
         } catch (InterruptedException | DocumentException e) {
             e.printStackTrace();

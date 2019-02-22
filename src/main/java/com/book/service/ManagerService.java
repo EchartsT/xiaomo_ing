@@ -30,4 +30,7 @@ public class ManagerService {
     }
 
     public boolean editMa(Manager manager){        return managerDao.editManager(manager)>0;}
+
+    public boolean addMa(Manager manager){        return managerDao.addManager(manager)>0;}
+
 }

@@ -145,6 +145,16 @@
             <artifactId>httpclient</artifactId>
             <version>4.2.5</version>
         </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>9.0.14</version>
+        </dependency>
     </dependencies>
 
     <build>
