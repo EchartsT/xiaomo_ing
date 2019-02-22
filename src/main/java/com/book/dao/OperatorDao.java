@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 @Repository
@@ -20,8 +21,8 @@ public class OperatorDao {
     private final static String Oprecord_LIST_SQL="SELECT * FROM oprecord";
     private final static String Oprecord_DELETE_SQL="delete from oprecord where operatorId = ? ";
     private final static String GET_OP_SQL="SELECT * FROM oprecord where userId = ? ";
-    private final static String ADD_Oprecord_SQL="INSERT INTO operecord VALUES(NULL,?,?,NULL,?,NULL)";
-    private final static String UPDATE_Oprecord_SQL="UPDATE operecord SET endTime = ? WHERE userId = ?";
+    private final static String ADD_Oprecord_SQL="INSERT INTO oprecord VALUES(?,?,?,NULL,NULL,NULL)";
+    private final static String UPDATE_Oprecord_SQL="UPDATE oprecord SET endTime = ? WHERE userId = ?";
 
     @Autowired
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
@@ -70,15 +71,16 @@ public class OperatorDao {
 
     public int addOprecord(Oprecord oprecord){
         String userId=oprecord.getUserId();
-        String startTime=oprecord.getStartTime();
+        String operatorId = oprecord.getOperatorId();
+        Timestamp startTime=java.sql.Timestamp.valueOf(oprecord.getStartTime());
         String fileName = oprecord.getFileName();
 
-        return jdbcTemplate.update(ADD_Oprecord_SQL,new Object[]{userId,startTime,fileName});
+        return jdbcTemplate.update(ADD_Oprecord_SQL,new Object[]{operatorId,userId,fileName});
     }
 
     public int updateOprecord(Oprecord oprecord){
         String userId=oprecord.getUserId();
-        String endTime = oprecord.getEndTime();
+        Timestamp endTime=java.sql.Timestamp.valueOf(oprecord.getStartTime());
 
         return jdbcTemplate.update(UPDATE_Oprecord_SQL,new Object[]{userId,endTime});
     }

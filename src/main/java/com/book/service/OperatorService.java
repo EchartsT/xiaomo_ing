@@ -35,3 +35,17 @@ public class OperatorService {
         return operatorDao.updateOprecord(oprecord)>0;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -59,7 +59,7 @@ public class verifyWXToken extends HttpServlet {
         request.setCharacterEncoding("UTF-8");//转换编码方式
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();//通过PrintWriter返回消息至微信后台
-        String accessToken = "18_uWIBGVxvAgBEyOqd9Cf5mmTPlYzq5gaWbpj2iLKqadtTF27HI8tE4ucF4yYOr4Ie6UruJkCgz8DvizoGMb3A6iWBfWDZ8Zw1lLj4qq2-ZaAuX5O1EV0WWA05__LsGkAZIWRFf0MTeDnbg_DNRHNbAFABRX";
+        String accessToken = "18_9PKcsIXLzIZ-CSsyMsgkU7qfO0-zelaZhWgLPu7PDqD6VBUx-_AO0zSDdBvgZYYK-siQ7YDyIqbvdZFSQydP_eiamgWsWRdiHYvIpolRCsFw4Idd8xOg3TeOCXUhPcX1VvFWhNDpTdTC5QMBQQGhAIAFFV";
 
         //接收消息
         try {
@@ -97,9 +97,11 @@ public class verifyWXToken extends HttpServlet {
 
                     //在oprecord表（操作流水记录表）中插入一条记录用于记录该微信用户的流水
                     oprecord.setUserId(fromUserName);
+                    oprecord.setOperatorId(fromUserName+askTime);
                     oprecord.setStartTime(askTime);
                     oprecord.setFileName("D:/" + fromUserName + ".txt");
                     operatorService.addOprecord(oprecord);
+                    System.out.println(1);
 
                 }else if(MessageUtil.MESSAGE_UNSUBSCIBE.equals(eventType)){//处理取消订阅事件
                     userInfo = weixinService.getUserInfo(accessToken,fromUserName);
@@ -127,9 +129,9 @@ public class verifyWXToken extends HttpServlet {
 
             //执行python脚本———聊天
             Process proc;
-            //String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_knowledge_ask&answer.py",content};
+            String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_knowledge_ask&answer.py",content};
             //String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
-            String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
+            //String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
             proc = Runtime.getRuntime().exec(args);
 
             //使用缓冲流接受程序返回的结果
@@ -186,6 +188,7 @@ public class verifyWXToken extends HttpServlet {
             oprecord.setUserId(fromUserName);
             oprecord.setEndTime(answerTime);
             operatorService.updateOprecord(oprecord);
+            System.out.println(1);
 
         } catch (InterruptedException | DocumentException e) {
             e.printStackTrace();
