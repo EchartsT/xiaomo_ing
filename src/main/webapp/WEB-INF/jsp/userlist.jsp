@@ -139,7 +139,6 @@
             <thead>
             <tr>
                 <th>用户编号</th>
-                <th>用户标识id</th>
                 <th>用户昵称</th>
                 <th>聊天文件</th>
                 <th>订阅状态</th>
@@ -150,7 +149,6 @@
             <c:forEach items="${users}" var="alog">
                 <tr  v-for="alog in users">
                     <td><c:out value="${alog.userId}"></c:out></td>
-                    <td><c:out value="${alog.userOpenId}"></c:out></td>
                     <td><c:out value="${alog.userName}"></c:out></td>
                     <td><c:out value="${alog.chatData}"></c:out></td>
                     <td><c:out value="${alog.isSubscribe}"></c:out></td>

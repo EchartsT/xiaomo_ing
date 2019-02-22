@@ -1,10 +1,7 @@
 package com.book.service;
 
-import com.book.dao.ManagerDao;
 import com.book.dao.UserDao;
-import com.book.domain.Manager;
 import com.book.domain.User;
-import com.book.web.VerifyWXToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

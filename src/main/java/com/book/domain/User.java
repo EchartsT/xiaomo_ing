@@ -5,7 +5,6 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     private String userId;
-    private String userOpenId;
     private String userName;
     private boolean isSubscribe;
     private InputStream chatData;
@@ -18,13 +17,7 @@ public class User implements Serializable {
         this.userId = userId;
     }
 
-    public String getUserOpenId() {
-        return userOpenId;
-    }
 
-    public void setUserOpenId(String userOpenId) {
-        this.userOpenId = userOpenId;
-    }
 
     public String getUserName() {
         return userName;
