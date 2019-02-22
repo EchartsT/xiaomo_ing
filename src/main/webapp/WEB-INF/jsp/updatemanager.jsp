@@ -9,7 +9,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>更改密码</title>
+    <title>修改管理员</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <script src="js/jquery-3.2.1.js"></script>
     <script src="js/bootstrap.min.js" ></script>
@@ -107,31 +107,59 @@
                 <c:forEach items="${list}" var="alog" varStatus="s">
                 <div class="input-group">
                     <span  class="input-group-addon">管理员编号</span>
-                    <input  type="text" class="form-control" name="readerId" id="managerId"><c:out value="${alog.managerId}"></c:out>
+                    <input type="text" class="form-control" name="managerId" id="managerId"  value="<c:out value="${alog.managerId}" escapeXml="true"></c:out>">
                 </div>
-
                 <div class="input-group">
                     <span class="input-group-addon">管理员姓名</span>
-                    <input type="text" class="form-control" name="name" id="managerName"  ><c:out value="${alog.managerName}"></c:out>
+                    <input type="text" class="form-control" name="managerName" id="managerName" value="<c:out value="${alog.managerName}" escapeXml="true"></c:out>" >
                 </div>
                 <div class="input-group">
                     <span  class="input-group-addon">管理员密码</span>
-                    <input type="text" class="form-control" name="sex" id="managerPwd" ><c:out value="${alog.managerPwd}"></c:out>
+                    <input type="text" class="form-control" name="managerPwd" id="managerPwd" value="<c:out value="${alog.managerPwd}" escapeXml="true"></c:out>" >
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon">管理员状态</span>
-                    <input type="text" class="form-control" name="birth" id="managerStatus"  ><c:out value="${alog.managerStatus}"></c:out>
+                    <input type="text" class="form-control" name="managerStatus" id="managerStatus"  value="<c:out value="${alog.managerStatus}" escapeXml="true"></c:out>" >
                 </div>
                 </c:forEach>
-                <input type="submit" value="添加" class="btn btn-success btn-sm" class="text-left">
+                <input type="submit" value="确认" class="btn btn-success btn-sm text-left">
+                <p style="text-align: right;color: red;position: absolute" id="info2"></p><br/>
                 <script>
                     function mySubmit(flag){
                         return flag;
                     }
-                    $("#readeredit").submit(function () {
-                        if($("#managerName").val()==''||$("#managerPwd").val()==''||$("#managerStatus").val()==''){
-                            alert("请填入完整读者信息！");
+                    $("#manageredit").submit(function () {
+                        var managerId =$("#managerId").val();
+                        var managerName=$("#managerName").val();
+                        var managerPwd=$("#managerPwd").val();
+                        var managerStatus=$("#managerStatus").val();
+
+                        if ($("#managerName").val() == '' || $("#managerPwd").val() == '' || $("#managerStatus").val() == '') {
+                            alert("请填入完整管理员信息！");
                             return mySubmit(false);
+                        } else {
+                            mySubmit(true);
+                            // $.ajax({
+                            //     type: "POST",
+                            //     url: "/updatemanager.html",
+                            //     data: {
+                            //         managerId: managerId,
+                            //         managerName: managerName,
+                            //         managerPwd: managerPwd,
+                            //         managerStatus: managerStatus
+                            //     },
+                            //     dataType: "json",
+                            //     success: function(data) {
+                            //         if (data.stateCode.trim() == "0") {
+                            //             $("#info2").text("提示:修改失败");
+                            //         } else if (data.stateCode.trim() == "1") {
+                            //             $("#info2").text("提示:修改成功");
+                            //             window.location.href = "managerlist.html";
+                            //             //window.location.href="operatorList.html";
+                            //         }
+                            //     }
+                            //
+                            // })
                         }
                     })
                 </script>

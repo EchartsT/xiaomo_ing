@@ -103,34 +103,60 @@
             <h3 class="panel-title">添加管理员</h3>
         </div>
         <div class="panel-body">
-            <form action="updatemanager.html" method="post" id="manageredit" >
+            <form  id="manageredit" >
                 <div class="input-group">
                     <span  class="input-group-addon">管理员编号</span>
-                    <input  type="text" class="form-control" name="readerId" id="managerId">
+                    <input  type="text" class="form-control" name="managerId" id="managerId">
                 </div>
 
                 <div class="input-group">
                     <span class="input-group-addon">管理员姓名</span>
-                    <input type="text" class="form-control" name="name" id="managerName"  >
+                    <input type="text" class="form-control" name="managerName" id="managerName"  >
                 </div>
                 <div class="input-group">
                     <span  class="input-group-addon">管理员密码</span>
-                    <input type="text" class="form-control" name="sex" id="managerPwd" >
+                    <input type="text" class="form-control" name="managerPwd" id="managerPwd" >
                 </div>
                 <div class="input-group">
                     <span class="input-group-addon">管理员状态</span>
-                    <input type="text" class="form-control" name="birth" id="managerStatus"  >
+                    <input type="text" class="form-control" name="managerStatus" id="managerStatus"  >
                 </div>
+                <p style="text-align: right;color: red;position: absolute" id="info2"></p><br/>
                 <input type="submit" value="添加" class="btn btn-success btn-sm" class="text-left">
                 <script>
                     function mySubmit(flag){
                         return flag;
                     }
                     $("#readeredit").submit(function () {
+                        var managerId =$("#managerId").val();
+                        var managerName=$("#managerName").val();
+                        var managerPwd=$("#managerPwd").val();
+                        var managerStatus=$("#managerStatus").val();
+
+
                         if($("#managerName").val()==''||$("#managerPwd").val()==''||$("#managerStatus").val()==''){
-                            alert("请填入完整读者信息！");
+                            alert("请填入完整管理员信息！");
                             return mySubmit(false);
-                        }
+                        }else {
+                            $.ajax({
+                                type: "POST",
+                                url: "manageradd_do.html",
+                                data: {
+                                    managerId:managerId,
+                                    managerNamer:managerName,
+                                    managerPwd:managerPwd,
+                                    managerStatus:managerStatus
+                                },
+                                dataType: "json",
+                                success: function(data) {
+                                    if(data.stateCode.trim() == "0") {
+                                        $("#info2").text("提示:添加失败");
+                                    } else if(data.stateCode.trim() == "1") {
+                                        $("#info2").text("提示:添加成功");
+                                        window.location.href="managerlist.html";
+                                        //window.location.href="operatorList.html";
+                                    }
+                                }
                     })
                 </script>
             </form>
