@@ -5,6 +5,11 @@ import com.google.gson.Gson;
 import com.book.domain.BaseMessage;
 import com.book.util.WeiXinUtil;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
 
 public class WeixinService {
 
@@ -33,10 +38,35 @@ public class WeixinService {
      * @param opendID  用户的openId，这个通过当用户进行了消息交互的时候，才有
      * @return
      */
-    public static String getUserInfo(String accessToken, String opendID){
+    public static JSONObject getUserInfo(String accessToken, String opendID){
         String url = getUserInfo_url.replace("ACCESS_TOKEN" , accessToken);
         url = url.replace("OPENID" ,opendID);
         JSONObject jsonObject = WeiXinUtil.doGetStr(url);
-        return jsonObject.toString();
+        return jsonObject;
+    }
+
+     //创建聊天文件
+    public static boolean createTxtFile(String name) throws IOException {
+        boolean flag = false;
+        String filenameTemp = "D:/" + name + ".txt";
+        File filename = new File(filenameTemp);
+
+        if (!filename.exists()) {
+            filename.createNewFile();
+            flag = true;
+        }
+        return flag;
+    }
+
+    // 写入文件
+    public static void writeChatInfo(String filename, String data) throws IOException {
+        try {
+            //打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件,如果为 true，则将字节写入文件末尾处，而不是写入文件开始处
+            FileWriter writer = new FileWriter(filename, true);
+            writer.write(data);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

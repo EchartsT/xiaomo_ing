@@ -1,11 +1,14 @@
 package com.book.web;
 
+import com.book.domain.Oprecord;
 import com.book.domain.SendTextMessage;
 import com.book.domain.Text;
+import com.book.service.OperatorService;
 import com.book.util.SignUtil;
 import com.book.util.MessageUtil;
 import com.book.domain.TextMessage;
 import com.book.service.WeixinService;
+import net.sf.json.JSONObject;
 import org.dom4j.DocumentException;
 
 import javax.servlet.ServletException;
@@ -16,6 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -55,7 +59,7 @@ public class verifyWXToken extends HttpServlet {
         request.setCharacterEncoding("UTF-8");//转换编码方式
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();//通过PrintWriter返回消息至微信后台
-        String accessToken = "18_nywy_oBnKxV6n4OB5QL376OkofijmkU1yfG8RoZh3cnnrYlxV9liFhxc2MvGyvZWqtNqhOMu__O645LTFhrxel1GM-U1f65o37PUFcLdbexfVoL8U-Q7rI4eyvHpR2EWRHNLSXYHsp6WuHkoIOCgAHAMSG";
+        String accessToken = "18_uWIBGVxvAgBEyOqd9Cf5mmTPlYzq5gaWbpj2iLKqadtTF27HI8tE4ucF4yYOr4Ie6UruJkCgz8DvizoGMb3A6iWBfWDZ8Zw1lLj4qq2-ZaAuX5O1EV0WWA05__LsGkAZIWRFf0MTeDnbg_DNRHNbAFABRX";
 
         //接收消息
         try {
@@ -70,19 +74,35 @@ public class verifyWXToken extends HttpServlet {
             String line;
             String lines = "";
             String message = null;
-            String userInfo = null;
+            JSONObject userInfo = null;
 
-            WeixinService sms=new WeixinService();
+            //获取当前系统时间作为用户发送消息时间
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            String askTime = df.format(new Date());
+
+            WeixinService weixinService=new WeixinService();
+            OperatorService operatorService = new OperatorService();
+            Oprecord oprecord = new Oprecord();
 
             //判断是否为事件类型
             if(MessageUtil.MSGTYPE_EVENT.equals(msgType)){
                 if(MessageUtil.MESSAGE_SUBSCIBE.equals(eventType)){//处理订阅事件
 
-                    userInfo = sms.getUserInfo(accessToken,fromUserName);
+                    //获取用户信息（openID，昵称，订阅状态）
+                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
                     System.out.println(userInfo);
 
+                    //创建txt文件用于存储聊天记录
+                    weixinService.createTxtFile(fromUserName);
+
+                    //在oprecord表（操作流水记录表）中插入一条记录用于记录该微信用户的流水
+                    oprecord.setUserId(fromUserName);
+                    oprecord.setStartTime(askTime);
+                    oprecord.setFileName("D:/" + fromUserName + ".txt");
+                    operatorService.addOprecord(oprecord);
+
                 }else if(MessageUtil.MESSAGE_UNSUBSCIBE.equals(eventType)){//处理取消订阅事件
-                    userInfo = sms.getUserInfo(accessToken,fromUserName);
+                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
                     System.out.println(userInfo);
                 }
             }
@@ -152,7 +172,20 @@ public class verifyWXToken extends HttpServlet {
             //System.out.println("accessToken:"+accessToken);
 
             //3.发送消息：调用业务类，发送消息
-            sms.sendMessage(accessToken, sendtextmessage);
+            weixinService.sendMessage(accessToken, sendtextmessage);
+
+            //获取当前系统时间作为回答时间
+            String answerTime = df.format(new Date());
+
+            //将本轮对话存入TXT文件
+            String filename = "D:/" + fromUserName + ".txt";
+            String data = askTime + "  " + content + "\r\n" + answerTime + " " + lines+ "\r\n";
+            weixinService.writeChatInfo(filename, data);
+
+            //在oprecord表（操作流水记录表）中的更新相应记录
+            oprecord.setUserId(fromUserName);
+            oprecord.setEndTime(answerTime);
+            operatorService.updateOprecord(oprecord);
 
         } catch (InterruptedException | DocumentException e) {
             e.printStackTrace();
