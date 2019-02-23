@@ -55,8 +55,8 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a href="userlist.html">用户列表</a></li>
-                </ul>
+                        <li><a href="userlist.html">用户列表</a></li>
+                    </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -70,11 +70,6 @@
                         <li class="divider"></li>
                         <li><a href="keywordList.html">关键词排名</a></li>
                     </ul>
-                </li>
-                <li >
-                    <a href="admin_repasswd.html" >
-                        密码修改
-                    </a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

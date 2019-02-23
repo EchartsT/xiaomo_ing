@@ -28,20 +28,18 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="allbooks.html">管理员列表</a></li>
+                        <li><a href="managerlist.html">管理员列表</a></li>
                         <li class="divider"></li>
-                        <li><a href="book_add.html">增加管理员</a></li>
+                        <li><a href="manageradd.html">增加管理员</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        读者管理
+                        用户管理
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="allreaders.html">全部读者</a></li>
-                        <li class="divider"></li>
-                        <li><a href="reader_add.html">增加读者</a></li>
+                        <li><a href="userlist.html">用户列表</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -57,14 +55,9 @@
                         <li><a href="keywordList.html">关键词排名</a></li>
                     </ul>
                 </li>
-                <li >
-                    <a href="admin_repasswd.html" >
-                        密码修改
-                    </a>
-                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="login.html"><span class="glyphicon glyphicon-user"></span>&nbsp;${admin.adminId}，已登录</a></li>
+                <li><a href="login.html"><span class="glyphicon glyphicon-user"></span>&nbsp;${admin.managerId}，已登录</a></li>
                 <li><a href="logout.html"><span class="glyphicon glyphicon-log-in"></span>&nbsp;退出</a></li>
             </ul>
         </div>

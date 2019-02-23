@@ -64,11 +64,6 @@
                         <li><a href="keywordList.html">关键词排名</a></li>
                     </ul>
                 </li>
-                <li >
-                    <a href="admin_repasswd.html" >
-                        密码修改
-                    </a>
-                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="login.html"><span class="glyphicon glyphicon-user"></span>&nbsp;${admin.managerId}，已登录</a></li>
