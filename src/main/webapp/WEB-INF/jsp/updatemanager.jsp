@@ -104,7 +104,6 @@
         </div>
         <div class="panel-body">
             <form action="updatemanager.html" method="post" id="manageredit" >
-                <c:forEach items="${list}" var="alog" varStatus="s">
                 <div class="input-group">
                     <span  class="input-group-addon">管理员编号</span>
                     <input type="text" class="form-control" name="managerId" id="managerId"  value="<c:out value="${alog.managerId}" escapeXml="true"></c:out>">
@@ -121,7 +120,6 @@
                     <span class="input-group-addon">管理员状态</span>
                     <input type="text" class="form-control" name="managerStatus" id="managerStatus"  value="<c:out value="${alog.managerStatus}" escapeXml="true"></c:out>" >
                 </div>
-                </c:forEach>
                 <input type="submit" value="确认" class="btn btn-success btn-sm text-left">
                 <p style="text-align: right;color: red;position: absolute" id="info2"></p><br/>
                 <script>
@@ -129,16 +127,16 @@
                         return flag;
                     }
                     $("#manageredit").submit(function () {
-                        var managerId =$("#managerId").val();
-                        var managerName=$("#managerName").val();
-                        var managerPwd=$("#managerPwd").val();
-                        var managerStatus=$("#managerStatus").val();
+                        // var managerId =$("#managerId").val();
+                        // var managerName=$("#managerName").val();
+                        // var managerPwd=$("#managerPwd").val();
+                        // var managerStatus=$("#managerStatus").val();
 
                         if ($("#managerName").val() == '' || $("#managerPwd").val() == '' || $("#managerStatus").val() == '') {
                             alert("请填入完整管理员信息！");
                             return mySubmit(false);
                         } else {
-                            mySubmit(true);
+                                mySubmit(true);
                             // $.ajax({
                             //     type: "POST",
                             //     url: "/updatemanager.html",

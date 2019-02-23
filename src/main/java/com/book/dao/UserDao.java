@@ -26,7 +26,7 @@ public class UserDao {
     private static final String User_LIST_SQL="SELECT * FROM user ";
     private final static String User_DELETE_SQL="DELETE from User where userId= ? ";
     private final static String QUERY_User_SQL="SELECT * FROM user WHERE userName like ?   ";
-    private final static String User_Add_SQL="INSERT INTO user (userId，userName,isSubscribe,chatData) VALUES ( ?, ? , ? ,?)";
+    private final static String User_Add_SQL="INSERT INTO user (userId,userName,isSubscribe,chatData) VALUES ( ?, ? , ? ,?)";
 
     public int userAdd(String userId, String userOpenId, String userName, boolean isSubscribe, InputStream chatData){
         userId = userList().size()+1+"";

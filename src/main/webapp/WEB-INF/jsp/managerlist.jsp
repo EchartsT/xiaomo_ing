@@ -81,9 +81,9 @@
 </nav>
 
 <div style="padding: 70px 550px 10px">
-    <form   method="post" action="/querymanager.html" class="form-inline"  id="searchform">
+    <form   method="post" action="querymanager.html" class="form-inline"  id="searchform">
         <div class="input-group">
-            <input type="text" placeholder="输入管理员ID" class="form-control" id="search" name="searchWord" class="form-control">
+            <input type="text" placeholder="输入管理员ID或管理员姓名" class="form-control" id="search" name="searchWord" class="form-control">
             <span class="input-group-btn">
                             <input type="submit" value="搜索" class="btn btn-default">
             </span>
@@ -148,8 +148,8 @@
                     <td><c:out value="${alog.managerPwd}"></c:out></td>
                     <td><c:out value="${alog.managerStatus}"></c:out></td>
                     <td>
-                        <a href="deletemanager.html?managerId=<c:out value="${alog.managerId}"></c:out>"><button type="button" class="btn btn-danger btn-xs">删除</button></a>
-                        <a href="updatemanager_info.html?managerId=<c:out value="${alog.managerId}"></c:out>"><button type="button" class="btn btn-info btn-xs">修改</button></a>
+                        <a href="deletemanager.html?managerId=<c:out value="${alog.managerId}"></c:out>"><button type="button" class="btn btn-danger btn-xs" >删除</button></a>
+                        <a href="updatemanager_info.html?managerId=<c:out value="${alog.managerId}"></c:out>"><button type="button" class="btn btn-info btn-xs" >修改</button></a>
                     </td>
                 </tr>
             </c:forEach>

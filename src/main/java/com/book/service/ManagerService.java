@@ -25,7 +25,7 @@ public class ManagerService {
         return managerDao.matchMA(searchWord);
     }
 
-    public ArrayList<Manager> searchMa(String managerId){
+    public Manager searchMa(String managerId){
         return managerDao.getMatch(managerId);
     }
 

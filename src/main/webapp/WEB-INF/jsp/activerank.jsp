@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>活跃度排名</title>
@@ -12,6 +12,23 @@
         }
     </style>
 
+    <script >
+        function mySubmit(flag){
+            return flag;
+        }
+        $("#searchform").submit(function () {
+            var val=$("#search").val();
+            if(val==''){
+                alert("请输入关键字");
+                return mySubmit(false);
+            }
+        });
+       
+       $("#choose :input:radio:checked").change(function () {
+           alert("????");
+       })
+        //window.location.href = "acList.html";
+    </script>
 </head>
 <body>
 
@@ -74,41 +91,14 @@
             </span>
         </div>
     </form>
-    <from >
-        <div  id="choose" class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-secondary active">
-                <input  type="radio" name="options" value="desc" id="option1" autocomplete="off" checked="true" > 降序
-            </label>
-            <label class="btn btn-secondary">
-                <input type="radio" name="options"  value="asc" id="option2" autocomplete="off"> 升序
-            </label>
-        </div>
-    </from>
-    <script type="text/javascript">
-        function mySubmit(flag){
-            return flag;
-        }
-        $("#searchform").submit(function () {
-            var val=$("#search").val();
-            if(val==''){
-                alert("请输入关键字");
-                return mySubmit(false);
-            }
-        });
-
-        // $("input[name=options]").click(function() {
-        //     var op = $("input[name=options]:checked").val();
-        //     alert(op);
-        // });
-        $('#choose label').click(function() {
-            $(this).children("input").prop("checked",true);
-
-
-
-            // TODO: insert whatever you want to do with $(this) here
-        });
-            //window.location.href = "acList.html";
-    </script>
+        <%--<div  id="choose" class="btn-group btn-group-toggle" data-toggle="buttons">--%>
+            <%--<label class="btn btn-secondary active" id = "option1_label">--%>
+                <%--<input  type="radio" name="options" value="desc" id="option1" autocomplete="off" checked > 降序--%>
+            <%--</label>--%>
+            <%--<label class="btn btn-secondary" id = "option2_label">--%>
+                <%--<input type="radio" name="options"  value="asc" id="option2" autocomplete="off"> 升序--%>
+            <%--</label>--%>
+        <%--</div>--%>
 </div>
 <div style="position: relative;top: 10%">
     <c:if test="${!empty succ}">

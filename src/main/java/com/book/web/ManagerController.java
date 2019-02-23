@@ -59,36 +59,27 @@ public class ManagerController {
     public ModelAndView updatemanager_info(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("updatemanager");
         String managerId = request.getParameter("managerId");
-        ArrayList<Manager> ma = managerService.searchMa(managerId);
-        modelAndView.addObject("list", managerService.searchMa(managerId));
+        Manager ma = managerService.searchMa(managerId);
+        modelAndView.addObject("alog", ma);
         return modelAndView;
     }
     @RequestMapping("/updatemanager.html")
-    public @ResponseBody Object updatemanager(HttpServletRequest request) {
+    public ModelAndView updatemanager(HttpServletRequest request) {
         Manager manager = new Manager();
         manager.setManagerId(request.getParameter("managerId"));
         manager.setManagerName(request.getParameter("managerName"));
         manager.setManagerPwd(request.getParameter("managerPwd"));
         manager.setManagerStatus(request.getParameter("managerStatus"));
-//        manager.setManagerId(managerId);
-//        manager.setManagerName(managerName);
-//        manager.setManagerPwd(managerPwd);
-//        manager.setManagerStatus(managerStatus);
-       boolean succ = managerService.editMa(manager);
-        HashMap<String, String> res = new HashMap<String, String>();
-        if (succ){
-            //redirectAttributes.addFlashAttribute("succ", "添加成功！");
-            //return "redirect:/managerList.html";
-            res.put("stateCode", "1");
-            res.put("msg","添加成功！");
+        ModelAndView modelAndView = new ModelAndView("updatemanager");
+        modelAndView.addObject("alog", manager);
+        if (managerService.editMa(manager)){
+            modelAndView.addObject("succ", "修改成功！");
+
+        }else {
+            modelAndView.addObject("error", "修改失败！");
         }
-        else {
-            //redirectAttributes.addFlashAttribute("error", "添加失败！");
-            // return "redirect:/managerList.html";
-            res.put("stateCode", "0");
-            res.put("msg","添加失败！");
-        }
-        return res;
+        return modelAndView;
+
     }
 
     //增加管理原
@@ -98,7 +89,7 @@ public class ManagerController {
     }
 
     @RequestMapping("/manageradd_do.html")
-    public @ResponseBody Object manageradd_do(HttpServletRequest request, String managerId, RedirectAttributes redirectAttributes){
+    public ModelAndView manageradd_do(HttpServletRequest request, String managerId, RedirectAttributes redirectAttributes){
         Manager manager = new Manager();
 //        manager.setManagerId(managerCommand.getManagerId());
 //        manager.setManagerName(managerCommand.getManagerName());
@@ -108,21 +99,17 @@ public class ManagerController {
         manager.setManagerName(request.getParameter("managerName"));
         manager.setManagerPwd(request.getParameter("managerPwd"));
         manager.setManagerStatus(request.getParameter("managerStatus"));
-        boolean succ = managerService.addMa(manager);
-        HashMap<String, String> res = new HashMap<String, String>();
-        if (succ){
-           //redirectAttributes.addFlashAttribute("succ", "添加成功！");
-            //return "redirect:/managerList.html";
-            res.put("stateCode", "1");
-            res.put("msg","添加成功！");
+        ModelAndView modelAndView = new ModelAndView("managerlist");
+        boolean flag = managerService.addMa(manager);
+        modelAndView.addObject("list", managerService.managerList());
+        if(flag){
+            modelAndView.addObject("succ", "添加成功！");
+        }else {
+            modelAndView.addObject("error", "添加失败！");
+
         }
-        else {
-            //redirectAttributes.addFlashAttribute("error", "添加失败！");
-           // return "redirect:/managerList.html";
-            res.put("stateCode", "0");
-            res.put("msg","添加失败！");
-        }
-        return res;
+
+        return modelAndView;
     }
 
 
