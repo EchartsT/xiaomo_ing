@@ -3,7 +3,6 @@ package com.book.dao;
 import com.book.domain.Lend;
 import com.book.domain.Oprecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.ast.Operator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
@@ -13,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
 @Repository
 public class OperatorDao {
     private JdbcTemplate jdbcTemplate;
@@ -21,6 +21,7 @@ public class OperatorDao {
     private final static String Oprecord_LIST_SQL="SELECT * FROM oprecord";
     private final static String Oprecord_DELETE_SQL="delete from oprecord where operatorId = ? ";
     private final static String GET_OP_SQL="SELECT * FROM oprecord where userId = ? ";
+    private final static String GET_RowNum_SQL="select count(*) from oprecord where userId = ? ";
     private final static String ADD_Oprecord_SQL="INSERT INTO oprecord (operatorId,userId,startTime,fileName) VALUES(?,?,?,?)";
     private final static String UPDATE_Oprecord_SQL="UPDATE oprecord SET endTime = ? WHERE userId = ?";
 
@@ -72,16 +73,19 @@ public class OperatorDao {
     public int addOprecord(Oprecord oprecord){
         String userId=oprecord.getUserId();
         String operatorId = oprecord.getOperatorId();
-        Timestamp startTime=java.sql.Timestamp.valueOf(oprecord.getEndTime());
+        Timestamp startTime=java.sql.Timestamp.valueOf(oprecord.getStartTime());
         String fileName = oprecord.getFileName();
 
-        return jdbcTemplate.update(ADD_Oprecord_SQL,new Object[]{operatorId,userId,startTime,fileName});
+        int rowNum = jdbcTemplate.queryForObject(GET_RowNum_SQL, new Object[]{userId},Integer.class);
+        if(rowNum == 0){
+            return jdbcTemplate.update(ADD_Oprecord_SQL,new Object[]{operatorId,userId,startTime,fileName});
+        }return 0;
     }
 
     public int updateOprecord(Oprecord oprecord){
         String userId=oprecord.getUserId();
-        Timestamp endTime=java.sql.Timestamp.valueOf(oprecord.getStartTime());
+        Timestamp endTime=java.sql.Timestamp.valueOf(oprecord.getEndTime());
 
-        return jdbcTemplate.update(UPDATE_Oprecord_SQL,new Object[]{userId,endTime});
+        return jdbcTemplate.update(UPDATE_Oprecord_SQL,new Object[]{endTime,userId});
     }
 }

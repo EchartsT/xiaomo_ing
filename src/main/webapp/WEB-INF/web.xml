@@ -43,7 +43,7 @@
     <servlet>
         <servlet-name>coreServlet</servlet-name>
         <servlet-class>
-            com.book.web.verifyWXToken
+            com.book.web.VerifyWXToken
         </servlet-class>
     </servlet>
 
