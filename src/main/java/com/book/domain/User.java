@@ -8,6 +8,15 @@ public class User implements Serializable {
     private String userName;
     private boolean isSubscribe;
     private InputStream chatData;
+    private String fileName;
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public String getUserId() {
         return userId;

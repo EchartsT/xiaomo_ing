@@ -19,16 +19,21 @@ public class UserService {
     public ArrayList<User> List(){
         return userDao.userList();
     }
+
+    public boolean addUser(User user){
+        return userDao.addUser(user) > 0;
+    }
+
+
     public int deleteUserList(String userId ){
         return userDao.deleteUserList(userId);
     }
     public ArrayList<User> queryList(String userName){
         return userDao.queryUser(userName);
     }
-    public boolean addUser(User user){
-        return userDao.addUser(user)>0;
+
+    public User queryUserById(String userId){
+        return userDao.queryUserById(userId);
     }
-    public boolean updateUser(User user){
-        return userDao.updateUser(user)>0;
-    }
+
 }

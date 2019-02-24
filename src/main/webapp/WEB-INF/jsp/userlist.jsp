@@ -145,7 +145,7 @@
                 <tr  v-for="alog in users">
                     <td><c:out value="${alog.userId}"></c:out></td>
                     <td><c:out value="${alog.userName}"></c:out></td>
-                    <td><c:out value="${alog.chatData}"></c:out></td>
+                    <td><a href="filedownload.html?fileName=<c:out value="${alog.fileName}"></c:out>"><c:out value="${alog.fileName}"></c:out></a></td>
                     <td><c:out value="${alog.isSubscribe}"></c:out></td>
                     <td>
                         <a href="deleteUser.html?userId=<c:out value="${alog.userId}"></c:out>"><button type="button" class="btn btn-danger btn-xs">删除</button></a>
