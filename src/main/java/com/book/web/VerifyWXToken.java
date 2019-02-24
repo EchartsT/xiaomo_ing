@@ -90,7 +90,7 @@ public class VerifyWXToken extends HttpServlet{
                 operatorService.updateAccess(accessTokenObject);
             }
         }else {
-            accessTokenObject=WeiXinUtil.getAccessToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+            accessTokenObject=WeiXinUtil.getToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
             operatorService.updateAccess(accessTokenObject);
         }
             accessToken = accessTokenObject.getAccess_token();
