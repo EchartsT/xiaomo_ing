@@ -159,7 +159,7 @@ public class WeiXinUtil {
     public static AccessToken getToken( String appid, String secret)
     {
         AccessToken accessToken = new AccessToken();;
-        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-M-d HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d HH:mm:ss");
         String turl = String.format(
                 "%s?grant_type=client_credential&appid=%s&secret=%s", "https://api.weixin.qq.com/cgi-bin/token",
                 appid, secret);

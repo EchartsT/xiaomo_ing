@@ -36,4 +36,11 @@ public class UserService {
         return userDao.queryUserById(userId);
     }
 
+    public boolean addUser2(User user){
+        return userDao.addUser2(user)>0;
+    }
+    public boolean updateUser(User user){
+        return userDao.updateUser(user)>0;
+    }
+
 }

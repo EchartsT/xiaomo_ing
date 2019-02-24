@@ -51,8 +51,8 @@ public class WeixinService {
     public static boolean createTxtFile(String name) throws IOException {
         boolean flag = false;
         //String filenameTemp = "D:/" + name + ".txt";
-//        String filenameTemp = FileUtil.createDirectory()+"/"+name+ ".txt";
-        String filenameTemp = "/Users/ashley/xiaomo_ing/chatData/" + name + ".txt";
+       String filenameTemp = FileUtil.createDirectory()+"/"+name+ ".txt";
+        //String filenameTemp = "/Users/ashley/xiaomo_ing/chatData/" + name + ".txt";
         File filename = new File(filenameTemp);
 
         if (!filename.exists()) {

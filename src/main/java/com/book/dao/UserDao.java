@@ -29,6 +29,10 @@ public class UserDao {
     private final static String QUERY_User_SQL2="SELECT * FROM user WHERE userId = ?   ";
 
     private final static String User_Add_SQL="INSERT INTO user (userId,userName,isSubscribe,fileName) VALUES ( ?, ?  ,?,?)";
+    private final static String GET_RowNum_SQL="select count(*) from user where userId = ? ";
+    private final static String ADD_User_SQL="INSERT INTO user (userId,userName,isSubscribe) VALUES(?,?,?)";
+    private final static String UPDATE_User_SQL="UPDATE user SET isSubscribe = ? WHERE userId = ?";
+
 
     public int addUser(User user){
         String userId = user.getUserId();
@@ -95,7 +99,26 @@ public class UserDao {
         return users;
     }
 
+    public int addUser2(User user){
+        String userId = user.getUserId();
+        String userName = user.getUserName();
+        boolean isSubscribe = user.getIsSubscribe();
 
+        int rowNum = jdbcTemplate.queryForObject(GET_RowNum_SQL, new Object[]{userId},Integer.class);
+        if(rowNum == 0){
+            return jdbcTemplate.update(ADD_User_SQL,new Object[]{userId,userName,String.valueOf(isSubscribe)});
+        }
+        else{
+            return jdbcTemplate.update(UPDATE_User_SQL,new Object[]{String.valueOf(isSubscribe),userId});
+        }
+    }
+
+    public int updateUser(User user){
+        String userId = user.getUserId();
+        boolean isSubscribe = user.getIsSubscribe();
+
+        return jdbcTemplate.update(UPDATE_User_SQL,new Object[]{String.valueOf(isSubscribe),userId});
+    }
 
 
 }
