@@ -84,7 +84,8 @@ public class VerifyWXToken extends HttpServlet{
             long cha = newtime.getTime() - oldtime.getTime();
             double result = cha * 1.0 / (1000 * 60 * 60);
             if(result >2){
-                accessTokenObject=WeiXinUtil.getAccessToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+                //accessTokenObject=WeiXinUtil.getAccessToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+                accessTokenObject=WeiXinUtil.getToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
                 operatorService.deleteAccess();
                 operatorService.updateAccess(accessTokenObject);
             }
@@ -93,7 +94,7 @@ public class VerifyWXToken extends HttpServlet{
             operatorService.updateAccess(accessTokenObject);
         }
             accessToken = accessTokenObject.getAccess_token();
-        //String accessToken = "18_r-ZsoJRDrNlEKFZ2DYB_bF2RPuOu6QxHgyNcXruTryfUxJaJ8-t2NbPcNEUlX1D5Pxahgvs3FzbmEeJFULRreAc-X0tTwAW92qPExl70LKvYNVwjr7z-ToN5VOhF7c6Cl20SLUAj2ImTKACYMHLhAJAPKO";
+        //String accessToken = "18_Ff79PjIemePmm7Zxk1ebQVMmKUaou1Ygk279QYi3erJfbyHgbZuCx3qNVnUaDf8huUlp7sQIdED2248OvqA12C5bu152l-5ZV3MRV3IXVf_y0uZVSrLgfa6dvVOxRsXSpXUYeIzThkqV3vuSBIKfAAAOVX";
 
         /**
          * 接收消息
