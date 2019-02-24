@@ -137,7 +137,7 @@ public class VerifyWXToken extends HttpServlet{
                     user.setUserId(fromUserName);
                     user.setUserName(userName);
                     user.setIsSubscribe(isSubscribe);
-                    userService.addUser(user);
+                    userService.addUser2(user);
 
                     //在oprecord表（操作流水记录表）中插入一条记录用于记录该微信用户的流水
                     oprecord.setUserId(fromUserName);
