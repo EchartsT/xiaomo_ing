@@ -26,18 +26,24 @@ public class UserDao {
     private static final String User_LIST_SQL="SELECT * FROM user ";
     private final static String User_DELETE_SQL="DELETE from User where userId= ? ";
     private final static String QUERY_User_SQL="SELECT * FROM user WHERE userName like ?   ";
-    private final static String User_Add_SQL="INSERT INTO user (userId,userName,isSubscribe,chatData) VALUES ( ?, ? , ? ,?)";
+    private final static String QUERY_User_SQL2="SELECT * FROM user WHERE userId = ?   ";
 
-    public int userAdd(String userId, String userOpenId, String userName, boolean isSubscribe, InputStream chatData){
-        userId = userList().size()+1+"";
-        return  jdbcTemplate.update(User_Add_SQL,new Object[]{userId,userOpenId,userName,isSubscribe,chatData});
+    private final static String User_Add_SQL="INSERT INTO user (userId,userName,isSubscribe,fileName) VALUES ( ?, ?  ,?,?)";
+
+    public int addUser(User user){
+        String userId = user.getUserId();
+        String userName = user.getUserName();
+        boolean isSubscribe = user.getIsSubscribe();
+        String fileName = user.getFileName();
+        return  jdbcTemplate.update(User_Add_SQL,new Object[]{userId,userName,isSubscribe,fileName});
     }
 
     public static void extract(User user, ResultSet resultSet) throws SQLException{
         user.setUserId(resultSet.getString("userId"));
         user.setUserName(resultSet.getString("userName"));
         user.setIsSubscribe(resultSet.getBoolean("isSubscribe"));
-        user.setChatData(resultSet.getAsciiStream("chatData"));
+        user.setFileName(resultSet.getString("fileName"));
+
     }
 
     public ArrayList<User> userList(){
@@ -53,6 +59,19 @@ public class UserDao {
             }
         });
         return list;
+    }
+
+    public User queryUserById(String userId){
+        User user = new User();
+        jdbcTemplate.query(QUERY_User_SQL2, new Object[]{userId}, new RowCallbackHandler() {
+            public void processRow(ResultSet resultSet) throws SQLException {
+                resultSet.beforeFirst();
+                while (resultSet.next()){
+                    extract(user,resultSet);
+                }
+            }
+        });
+        return user;
     }
 
 

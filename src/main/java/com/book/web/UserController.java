@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @RequestMapping("/userlist.html")
-    public ModelAndView allBooks(){
+    public ModelAndView allUser(){
         ArrayList<User> users=userService.List();
         ModelAndView modelAndView=new ModelAndView("userlist");
         modelAndView.addObject("users",users);
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @RequestMapping("/deleteUser.html")
-    public String readerDelete(HttpServletRequest request,RedirectAttributes redirectAttributes){
+    public String deleteUser(HttpServletRequest request,RedirectAttributes redirectAttributes){
         String userId = request.getParameter("userId");
         int success=userService.deleteUserList(userId);
         if(success==1){

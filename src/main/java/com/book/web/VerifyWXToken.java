@@ -1,17 +1,16 @@
 package com.book.web;
 
-import com.book.domain.Oprecord;
-import com.book.domain.SendTextMessage;
-import com.book.domain.Text;
+import com.book.domain.*;
 import com.book.service.OperatorService;
+import com.book.service.UserService;
 import com.book.util.ApplicationContextHelper;
 import com.book.util.FileUtil;
 import com.book.util.SignUtil;
 import com.book.util.MessageUtil;
-import com.book.domain.TextMessage;
 import com.book.service.WeixinService;
 import net.sf.json.JSONObject;
 import org.dom4j.DocumentException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,6 +31,13 @@ import java.util.Map;
 
 public class VerifyWXToken extends HttpServlet{
     private OperatorService operatorService= ApplicationContextHelper.getBean(OperatorService.class);
+
+    private UserService userService;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * 确认请求来自微信服务器
@@ -85,6 +91,13 @@ public class VerifyWXToken extends HttpServlet{
             String askTime = df.format(new Date());
 
             WeixinService weixinService=new WeixinService();
+
+            userInfo = weixinService.getUserInfo(accessToken,fromUserName);
+
+
+
+            User user = new User();
+
             Oprecord oprecord = new Oprecord();
 
             //判断是否为事件类型
@@ -92,7 +105,6 @@ public class VerifyWXToken extends HttpServlet{
                 if(MessageUtil.MESSAGE_SUBSCIBE.equals(eventType)){//处理订阅事件
 
                     //获取用户信息（openID，昵称，订阅状态）
-                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
                     System.out.println(userInfo);
 
                     //创建txt文件用于存储聊天记录
@@ -105,9 +117,24 @@ public class VerifyWXToken extends HttpServlet{
                     oprecord.setFileName(fromUserName + ".txt");
                     operatorService.addOprecord(oprecord);
 
+                    //添加用户信息到数据库中
+                    String userId = userInfo.getString("openid");
+                    String userName = userInfo.getString("nickname");
+                    boolean isSubscribe = userInfo.getBoolean("subscribe");
+                    String fileName = fromUserName+".txt";
+
+                    user.setUserId(userId);
+                    user.setUserName(userName);
+                    user.setIsSubscribe(isSubscribe);
+                    user.setFileName(fileName);
+
+                    userService.addUser(user);
                 }else if(MessageUtil.MESSAGE_UNSUBSCIBE.equals(eventType)){//处理取消订阅事件
-                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
-                    System.out.println(userInfo);
+                    boolean isSubscribe = userInfo.getBoolean("subscribe");
+                    user = userService.queryUserById(fromUserName);
+                    user.setIsSubscribe(isSubscribe);
+
+                    userService.addUser(user);
                 }
             }
             else {
