@@ -2,15 +2,10 @@ package com.book.web;
 
 import com.book.domain.*;
 import com.book.service.OperatorService;
-import com.book.service.UserService;
-import com.book.util.ApplicationContextHelper;
-import com.book.util.FileUtil;
-import com.book.util.SignUtil;
-import com.book.util.MessageUtil;
+import com.book.util.*;
 import com.book.service.WeixinService;
 import net.sf.json.JSONObject;
 import org.dom4j.DocumentException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -32,13 +28,7 @@ import java.util.Map;
 public class VerifyWXToken extends HttpServlet{
     private OperatorService operatorService= ApplicationContextHelper.getBean(OperatorService.class);
 
-    private UserService userService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
+    //private WeixinService weixinService= ApplicationContextHelper.getBean(WeixinService.class);
     /**
      * 确认请求来自微信服务器
      */
@@ -69,9 +59,45 @@ public class VerifyWXToken extends HttpServlet{
         request.setCharacterEncoding("UTF-8");//转换编码方式
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();//通过PrintWriter返回消息至微信后台
-        String accessToken = "18_r-ZsoJRDrNlEKFZ2DYB_bF2RPuOu6QxHgyNcXruTryfUxJaJ8-t2NbPcNEUlX1D5Pxahgvs3FzbmEeJFULRreAc-X0tTwAW92qPExl70LKvYNVwjr7z-ToN5VOhF7c6Cl20SLUAj2ImTKACYMHLhAJAPKO";
 
-        //接收消息
+        /**
+         * accessToken超过两小时重新获取
+         */
+        String accessToken =null;
+        AccessToken accessTokenObject = new AccessToken();
+        accessTokenObject = operatorService.getAccess();
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-M-d HH:mm:ss");
+        Date oldtime = new Date();
+        Date newtime =new Date();
+        if(accessTokenObject.getAccess_token() != null ){
+            //判断是不是间隔两个小时
+            try {
+                oldtime= sdf.parse(accessTokenObject.getAccess_time());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            try {
+                 newtime = sdf.parse(sdf.format(new Date()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            long cha = newtime.getTime() - oldtime.getTime();
+            double result = cha * 1.0 / (1000 * 60 * 60);
+            if(result >2){
+                accessTokenObject=WeiXinUtil.getAccessToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+                operatorService.deleteAccess();
+                operatorService.updateAccess(accessTokenObject);
+            }
+        }else {
+            accessTokenObject=WeiXinUtil.getAccessToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+            operatorService.updateAccess(accessTokenObject);
+        }
+            accessToken = accessTokenObject.getAccess_token();
+        //String accessToken = "18_r-ZsoJRDrNlEKFZ2DYB_bF2RPuOu6QxHgyNcXruTryfUxJaJ8-t2NbPcNEUlX1D5Pxahgvs3FzbmEeJFULRreAc-X0tTwAW92qPExl70LKvYNVwjr7z-ToN5VOhF7c6Cl20SLUAj2ImTKACYMHLhAJAPKO";
+
+        /**
+         * 接收消息
+         */
         try {
             Map<String,String> map = MessageUtil.xmlToMap(request);
             String fromUserName = map.get("FromUserName");//发送方帐号（一个OpenID）
@@ -91,13 +117,6 @@ public class VerifyWXToken extends HttpServlet{
             String askTime = df.format(new Date());
 
             WeixinService weixinService=new WeixinService();
-
-            userInfo = weixinService.getUserInfo(accessToken,fromUserName);
-
-
-
-            User user = new User();
-
             Oprecord oprecord = new Oprecord();
 
             //判断是否为事件类型
@@ -105,6 +124,7 @@ public class VerifyWXToken extends HttpServlet{
                 if(MessageUtil.MESSAGE_SUBSCIBE.equals(eventType)){//处理订阅事件
 
                     //获取用户信息（openID，昵称，订阅状态）
+                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
                     System.out.println(userInfo);
 
                     //创建txt文件用于存储聊天记录
@@ -117,24 +137,9 @@ public class VerifyWXToken extends HttpServlet{
                     oprecord.setFileName(fromUserName + ".txt");
                     operatorService.addOprecord(oprecord);
 
-                    //添加用户信息到数据库中
-                    String userId = userInfo.getString("openid");
-                    String userName = userInfo.getString("nickname");
-                    boolean isSubscribe = userInfo.getBoolean("subscribe");
-                    String fileName = fromUserName+".txt";
-
-                    user.setUserId(userId);
-                    user.setUserName(userName);
-                    user.setIsSubscribe(isSubscribe);
-                    user.setFileName(fileName);
-
-                    userService.addUser(user);
                 }else if(MessageUtil.MESSAGE_UNSUBSCIBE.equals(eventType)){//处理取消订阅事件
-                    boolean isSubscribe = userInfo.getBoolean("subscribe");
-                    user = userService.queryUserById(fromUserName);
-                    user.setIsSubscribe(isSubscribe);
-
-                    userService.addUser(user);
+                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
+                    System.out.println(userInfo);
                 }
             }
             else {
