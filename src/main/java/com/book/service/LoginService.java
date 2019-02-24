@@ -24,12 +24,12 @@ public class LoginService {
         return managerDao.getMatchCount(adminId,password)==1;
     }
     //重置管理员密码
-    public boolean managerRePasswd(int adminId,String newPasswd){
+    public boolean managerRePasswd(String adminId,String newPasswd){
 
         return managerDao.rePassword(adminId,newPasswd)>0;
     }
     //获取管理员密码
-    public String getManagerPasswd(int id){
+    public String getManagerPasswd(String id){
         return managerDao.getPasswd(id);
     }
 

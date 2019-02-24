@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>活跃度排名</title>
@@ -12,6 +12,23 @@
         }
     </style>
 
+    <script >
+        function mySubmit(flag){
+            return flag;
+        }
+        $("#searchform").submit(function () {
+            var val=$("#search").val();
+            if(val==''){
+                alert("请输入关键字");
+                return mySubmit(false);
+            }
+        });
+       
+       $("#choose :input:radio:checked").change(function () {
+           alert("????");
+       })
+        //window.location.href = "acList.html";
+    </script>
 </head>
 <body>
 
@@ -28,20 +45,18 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="allbooks.html">管理员列表</a></li>
+                        <li><a href="managerlist.html">管理员列表</a></li>
                         <li class="divider"></li>
-                        <li><a href="book_add.html">增加管理员</a></li>
+                        <li><a href="manageradd.html">增加管理员</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        读者管理
+                        用户管理
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="allreaders.html">全部读者</a></li>
-                        <li class="divider"></li>
-                        <li><a href="reader_add.html">增加读者</a></li>
+                        <li><a href="userlist.html">用户列表</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -57,14 +72,9 @@
                         <li><a href="keywordList.html">关键词排名</a></li>
                     </ul>
                 </li>
-                <li >
-                    <a href="admin_repasswd.html" >
-                        密码修改
-                    </a>
-                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="login.html"><span class="glyphicon glyphicon-user"></span>&nbsp;${admin.adminId}，已登录</a></li>
+                <li><a href="login.html"><span class="glyphicon glyphicon-user"></span>&nbsp;${admin.managerId}，已登录</a></li>
                 <li><a href="logout.html"><span class="glyphicon glyphicon-log-in"></span>&nbsp;退出</a></li>
             </ul>
         </div>
@@ -81,41 +91,14 @@
             </span>
         </div>
     </form>
-    <from >
-        <div  id="choose" class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-secondary active">
-                <input  type="radio" name="options" value="desc" id="option1" autocomplete="off" checked="true" > 降序
-            </label>
-            <label class="btn btn-secondary">
-                <input type="radio" name="options"  value="asc" id="option2" autocomplete="off"> 升序
-            </label>
-        </div>
-    </from>
-    <script type="text/javascript">
-        function mySubmit(flag){
-            return flag;
-        }
-        $("#searchform").submit(function () {
-            var val=$("#search").val();
-            if(val==''){
-                alert("请输入关键字");
-                return mySubmit(false);
-            }
-        });
-
-        // $("input[name=options]").click(function() {
-        //     var op = $("input[name=options]:checked").val();
-        //     alert(op);
-        // });
-        $('#choose label').click(function() {
-            $(this).children("input").prop("checked",true);
-
-
-
-            // TODO: insert whatever you want to do with $(this) here
-        });
-            //window.location.href = "acList.html";
-    </script>
+        <%--<div  id="choose" class="btn-group btn-group-toggle" data-toggle="buttons">--%>
+            <%--<label class="btn btn-secondary active" id = "option1_label">--%>
+                <%--<input  type="radio" name="options" value="desc" id="option1" autocomplete="off" checked > 降序--%>
+            <%--</label>--%>
+            <%--<label class="btn btn-secondary" id = "option2_label">--%>
+                <%--<input type="radio" name="options"  value="asc" id="option2" autocomplete="off"> 升序--%>
+            <%--</label>--%>
+        <%--</div>--%>
 </div>
 <div style="position: relative;top: 10%">
     <c:if test="${!empty succ}">

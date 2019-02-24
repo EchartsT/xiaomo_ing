@@ -30,7 +30,7 @@ public class ManagerDao {
     private static final String GET_PASSWD_SQL="SELECT managerPwd from manager where managerId = ?";
     private static final String Manager_LIST_SQL="SElECT * FROM manager";
     private final static String Manager_DELETE_SQL="DELETE from manager where managerId= ? ";
-    private final static String GET_MA_SQL="SELECT * FROM manager where managerName = ? ";
+    private final static String GET_MA_SQL="SELECT * FROM manager where managerName = ? or managerid= ?";
     private final static String EDIT_MANAGER_SQL="update manager set  managerName = ? ,managerPwd = ?,managerStatus=? where managerId=?";
     private final static String ADD_MANAGER="INSERT INTO manager ( managerId, managerName,managerPwd,managerStatus )VALUES ( ?,?,?,? );";
 
@@ -38,23 +38,35 @@ public class ManagerDao {
         return jdbcTemplate.queryForObject(MATCH_ADMIN_SQL,new Object[]{managerId,password},Integer.class);
     }
     //修改时查找其他信息
-    public ArrayList<Manager> getMatch(String managerId){
+    public Manager getMatch(String managerId){
         //return jdbcTemplate.queryForObject(SEARCH_ADMIN_SQL,new Object[]{managerId},Manager.class);
-        final ArrayList<Manager> list=new ArrayList<Manager>();
-        jdbcTemplate.query(SEARCH_ADMIN_SQL, new Object[]{managerId},new RowCallbackHandler() {
-            public void processRow(ResultSet resultSet) throws SQLException {
-                resultSet.beforeFirst();
-                while (resultSet.next()){
-                    Manager ma=new Manager();
-                    ma.setManagerId(replaceBlank(resultSet.getString("managerId")));
-                    ma.setManagerName(replaceBlank(resultSet.getString("managerName")));
-                    ma.setManagerPwd(replaceBlank(resultSet.getString("managerPwd")));
-                    ma.setManagerStatus(replaceBlank(resultSet.getString("managerStatus")));
-                    list.add(ma);
-                }
-            }
-        });
-        return list;
+        Manager manager = new Manager();
+        jdbcTemplate.query(SEARCH_ADMIN_SQL,new Object[]{managerId},new RowCallbackHandler() {
+                    public void processRow(ResultSet resultSet) throws SQLException {
+                        manager.setManagerId(resultSet.getString("managerId"));
+                        manager.setManagerName(resultSet.getString("managerName"));
+                        manager.setManagerPwd(resultSet.getString("managerPwd"));
+                        manager.setManagerStatus(resultSet.getString("managerStatus"));
+                    }
+                });
+        return manager;
+
+
+//        final ArrayList<Manager> list=new ArrayList<Manager>();
+//        jdbcTemplate.query(SEARCH_ADMIN_SQL, new Object[]{managerId},new RowCallbackHandler() {
+//            public void processRow(ResultSet resultSet) throws SQLException {
+//                resultSet.beforeFirst();
+//                while (resultSet.next()){
+//                    Manager ma=new Manager();
+//                    ma.setManagerId(replaceBlank(resultSet.getString("managerId")));
+//                    ma.setManagerName(replaceBlank(resultSet.getString("managerName")));
+//                    ma.setManagerPwd(replaceBlank(resultSet.getString("managerPwd")));
+//                    ma.setManagerStatus(replaceBlank(resultSet.getString("managerStatus")));
+//                    list.add(ma);
+//                }
+//            }
+//        });
+//        return list;
 
     }
     //去掉回车空格。。
@@ -68,10 +80,10 @@ public class ManagerDao {
         return dest;
     }
 
-    public int rePassword(int managerId,String newPasswd){
+    public int rePassword(String managerId,String newPasswd){
         return jdbcTemplate.update(RE_PASSWORD_SQL,new Object[]{newPasswd,managerId});
     }
-    public String getPasswd(int managerId){
+    public String getPasswd(String  managerId){
         return jdbcTemplate.queryForObject(GET_PASSWD_SQL,new Object[]{managerId},String.class);
     }
     public ArrayList<Manager> managerList(){
@@ -96,7 +108,7 @@ public class ManagerDao {
     }
     public ArrayList<Manager> matchMA(String searchWord){
         final ArrayList<Manager> list=new ArrayList<Manager>();
-        jdbcTemplate.query(GET_MA_SQL, new Object[]{searchWord} ,new RowCallbackHandler() {
+        jdbcTemplate.query(GET_MA_SQL, new Object[]{searchWord,searchWord} ,new RowCallbackHandler() {
             public void processRow(ResultSet resultSet) throws SQLException {
                 resultSet.beforeFirst();
                 while (resultSet.next()){

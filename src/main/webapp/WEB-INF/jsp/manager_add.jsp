@@ -45,9 +45,7 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="allreaders.html">用户信息</a></li>
-                        <li class="divider"></li>
-                        <li><a href="reader_add.html">增加读者</a></li>
+                        <li><a href="userlist.html">用户列表</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -62,11 +60,6 @@
                         <li class="divider"></li>
                         <li><a href="keywordList.html">关键词排名</a></li>
                     </ul>
-                </li>
-                <li >
-                    <a href="admin_repasswd.html" >
-                        密码修改
-                    </a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -103,7 +96,7 @@
             <h3 class="panel-title">添加管理员</h3>
         </div>
         <div class="panel-body">
-            <form  id="manageredit" >
+            <form  id="manageredit"  action="manageradd_do.html" method="post">
                 <div class="input-group">
                     <span  class="input-group-addon">管理员编号</span>
                     <input  type="text" class="form-control" name="managerId" id="managerId">
@@ -128,34 +121,15 @@
                         return flag;
                     }
                     $("#readeredit").submit(function () {
-                        var managerId =$("#managerId").val();
-                        var managerName=$("#managerName").val();
-                        var managerPwd=$("#managerPwd").val();
-                        var managerStatus=$("#managerStatus").val();
-
-
+                        // var managerId =$("#managerId").val();
+                        // var managerName=$("#managerName").val();
+                        // var managerPwd=$("#managerPwd").val();
+                        // var managerStatus=$("#managerStatus").val();
                         if($("#managerName").val()==''||$("#managerPwd").val()==''||$("#managerStatus").val()==''){
                             alert("请填入完整管理员信息！");
                             return mySubmit(false);
                         }else {
-                            $.ajax({
-                                type: "POST",
-                                url: "manageradd_do.html",
-                                data: {
-                                    managerId:managerId,
-                                    managerNamer:managerName,
-                                    managerPwd:managerPwd,
-                                    managerStatus:managerStatus
-                                },
-                                dataType: "json",
-                                success: function(data) {
-                                    if(data.stateCode.trim() == "0") {
-                                        $("#info2").text("提示:添加失败");
-                                    } else if(data.stateCode.trim() == "1") {
-                                        $("#info2").text("提示:添加成功");
-                                        window.location.href="managerlist.html";
-                                        //window.location.href="operatorList.html";
-                                    }
+                            return mySubmit(true);
                                 }
                     })
                 </script>

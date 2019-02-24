@@ -1,5 +1,6 @@
 package com.book.service;
 
+import com.book.util.FileUtil;
 import net.sf.json.JSONObject;
 import com.google.gson.Gson;
 import com.book.domain.BaseMessage;
@@ -8,7 +9,6 @@ import com.book.util.WeiXinUtil;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 
 
 public class WeixinService {
@@ -48,7 +48,8 @@ public class WeixinService {
      //创建聊天文件
     public static boolean createTxtFile(String name) throws IOException {
         boolean flag = false;
-        String filenameTemp = "D:/" + name + ".txt";
+        //String filenameTemp = "D:/" + name + ".txt";
+        String filenameTemp = FileUtil.createDirectory()+"/"+name+ ".txt";
         File filename = new File(filenameTemp);
 
         if (!filename.exists()) {

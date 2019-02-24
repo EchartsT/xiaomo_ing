@@ -72,36 +72,37 @@ public class LoginController {
     }
 
 
-    //重置密码
-    @RequestMapping("admin_repasswd.html")
-    public ModelAndView reAdminPasswd() {
-
-        return new ModelAndView("admin_repasswd");
-    }
-
-    @RequestMapping("admin_repasswd_do")
-    public String reAdminPasswdDo(HttpServletRequest request,String oldPasswd,String newPasswd,String reNewPasswd,RedirectAttributes redirectAttributes ) {
-
-        Admin admin=(Admin) request.getSession().getAttribute("admin");
-        int id=admin.getAdminId();
-        String passwd=loginService.getManagerPasswd(id);
-
-        if(passwd.equals(oldPasswd)){
-            boolean succ=loginService.managerRePasswd(id,newPasswd);
-            if (succ){
-
-                redirectAttributes.addFlashAttribute("succ", "密码修改成功！");
-                return "redirect:/admin_repasswd.html";
-            }
-            else {
-                redirectAttributes.addFlashAttribute("error", "密码修改失败！");
-                return "redirect:/admin_repasswd.html";
-            }
-        }else {
-            redirectAttributes.addFlashAttribute("error", "旧密码错误！");
-            return "redirect:/admin_repasswd.html";
-        }
-    }
+//    //重置密码
+//    @RequestMapping("admin_repasswd.html")
+//    public ModelAndView reAdminPasswd() {
+//
+//        return new ModelAndView("admin_repasswd");
+//    }
+//
+//    @RequestMapping("admin_repasswd_do")
+//    public String reAdminPasswdDo(HttpServletRequest request,String oldPasswd,String newPasswd,String reNewPasswd,RedirectAttributes redirectAttributes ) {
+//
+//        Manager manager = (Manager) request.getSession().getAttribute()
+//        Admin admin=(Admin) request.getSession().getAttribute("admin");
+//        String id=admin.getAdminId();
+//        String passwd=loginService.getManagerPasswd(id);
+//
+//        if(passwd.equals(oldPasswd)){
+//            boolean succ=loginService.managerRePasswd(id,newPasswd);
+//            if (succ){
+//
+//                redirectAttributes.addFlashAttribute("succ", "密码修改成功！");
+//                return "redirect:/admin_repasswd.html";
+//            }
+//            else {
+//                redirectAttributes.addFlashAttribute("error", "密码修改失败！");
+//                return "redirect:/admin_repasswd.html";
+//            }
+//        }else {
+//            redirectAttributes.addFlashAttribute("error", "旧密码错误！");
+//            return "redirect:/admin_repasswd.html";
+//        }
+//    }
 
     //配置404页面
      @RequestMapping("*")

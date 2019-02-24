@@ -4,6 +4,8 @@ import com.book.domain.Oprecord;
 import com.book.domain.SendTextMessage;
 import com.book.domain.Text;
 import com.book.service.OperatorService;
+import com.book.util.ApplicationContextHelper;
+import com.book.util.FileUtil;
 import com.book.util.SignUtil;
 import com.book.util.MessageUtil;
 import com.book.domain.TextMessage;
@@ -28,7 +30,9 @@ import java.util.Map;
  *
  */
 
-public class VerifyWXToken extends HttpServlet {
+public class VerifyWXToken extends HttpServlet{
+    private OperatorService operatorService= ApplicationContextHelper.getBean(OperatorService.class);
+
     /**
      * 确认请求来自微信服务器
      */
@@ -59,7 +63,7 @@ public class VerifyWXToken extends HttpServlet {
         request.setCharacterEncoding("UTF-8");//转换编码方式
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();//通过PrintWriter返回消息至微信后台
-        String accessToken = "18_9PKcsIXLzIZ-CSsyMsgkU7qfO0-zelaZhWgLPu7PDqD6VBUx-_AO0zSDdBvgZYYK-siQ7YDyIqbvdZFSQydP_eiamgWsWRdiHYvIpolRCsFw4Idd8xOg3TeOCXUhPcX1VvFWhNDpTdTC5QMBQQGhAIAFFV";
+        String accessToken = "18_r-ZsoJRDrNlEKFZ2DYB_bF2RPuOu6QxHgyNcXruTryfUxJaJ8-t2NbPcNEUlX1D5Pxahgvs3FzbmEeJFULRreAc-X0tTwAW92qPExl70LKvYNVwjr7z-ToN5VOhF7c6Cl20SLUAj2ImTKACYMHLhAJAPKO";
 
         //接收消息
         try {
@@ -81,7 +85,6 @@ public class VerifyWXToken extends HttpServlet {
             String askTime = df.format(new Date());
 
             WeixinService weixinService=new WeixinService();
-            OperatorService operatorService = new OperatorService();
             Oprecord oprecord = new Oprecord();
 
             //判断是否为事件类型
@@ -99,97 +102,95 @@ public class VerifyWXToken extends HttpServlet {
                     oprecord.setUserId(fromUserName);
                     oprecord.setOperatorId(fromUserName+askTime);
                     oprecord.setStartTime(askTime);
-                    oprecord.setFileName("D:/" + fromUserName + ".txt");
+                    oprecord.setFileName(fromUserName + ".txt");
                     operatorService.addOprecord(oprecord);
-                    System.out.println(1);
 
                 }else if(MessageUtil.MESSAGE_UNSUBSCIBE.equals(eventType)){//处理取消订阅事件
                     userInfo = weixinService.getUserInfo(accessToken,fromUserName);
                     System.out.println(userInfo);
                 }
             }
+            else {
+                //判断是否为文本消息
+                //不论发送什么，先被动回复一句“正在查询，请稍候...”
+                if (MessageUtil.MESSAGE_TEXT.equals(msgType)) {
+                    TextMessage pretext = new TextMessage();
+                    pretext.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
+                    pretext.setToUserName(fromUserName);
+                    pretext.setMsgType("text");//文本类型
+                    pretext.setCreateTime(new Date().getTime());//当前时间
+                    pretext.setContent("正在查询，请稍候...");//返回消息
+                    pretext.setMsgId(MsgId);//消息ID
 
-            //判断是否为文本消息
-            //不论发送什么，先被动回复一句“正在查询，请稍候...”
-            if(MessageUtil.MESSAGE_TEXT.equals(msgType)) {
-                TextMessage pretext = new TextMessage();
-                pretext.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
-                pretext.setToUserName(fromUserName);
-                pretext.setMsgType("text");//文本类型
-                pretext.setCreateTime(new Date().getTime());//当前时间
-                pretext.setContent("正在查询，请稍候...");//返回消息
-                pretext.setMsgId(MsgId);//消息ID
+                    //将文本消息转换为xml
+                    message = MessageUtil.textMessageToXml(pretext);
+                    out.print(message);//返回消息
+                    System.out.println(message);
+                }
+                out.close();
+
+                //执行python脚本———聊天
+                Process proc;
+                //String[] args = new String[]{"python", "D:\\python\\code\\chatbot_by_similarity\\demo\\demo_knowledge_ask&answer.py", content};
+                //String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
+                String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
+                proc = Runtime.getRuntime().exec(args);
+
+                //使用缓冲流接受程序返回的结果
+                BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), "GBK"));//注意格式
+                while ((line = in.readLine()) != null) {
+                    lines += (line + "\n");
+                }
+                in.close();
+                proc.waitFor();
+
+                //主动发送消息给用户
+                TextMessage text = new TextMessage();
+                text.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
+                text.setToUserName(fromUserName);
+                text.setMsgType("text");//文本类型
+                text.setCreateTime(new Date().getTime());//当前时间
+                text.setContent(lines);//返回消息
+                text.setMsgId(MsgId);//消息ID
+
+                //排重
+                boolean isDuplicate = MessageUtil.isDuplicate(map);
+                if (isDuplicate)
+                    return;
 
                 //将文本消息转换为xml
-                message = MessageUtil.textMessageToXml(pretext);
-                out.print(message);//返回消息
+                message = MessageUtil.textMessageToXml(text);
+
                 System.out.println(message);
+
+                //1.创建文本消息对象
+                SendTextMessage sendtextmessage = new SendTextMessage();
+                sendtextmessage.setTouser(fromUserName);  //不区分大小写
+                sendtextmessage.setMsgtype("text");
+                Text texts = new Text();
+                texts.setContent(lines);
+                sendtextmessage.setText(texts);
+
+                //2.获取access_token:根据企业id和通讯录密钥获取access_token,并拼接请求url
+                //String accessToken= WeiXinUtil.getAccessToken(WeiXinParamesUtil.corpId, WeiXinParamesUtil.agentSecret).getToken();
+                //System.out.println("accessToken:"+accessToken);
+
+                //3.发送消息：调用业务类，发送消息
+                weixinService.sendMessage(accessToken, sendtextmessage);
+
+                //获取当前系统时间作为回答时间
+                String answerTime = df.format(new Date());
+
+                //将本轮对话存入TXT文件
+                String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
+                String data = askTime + "  " + content + "\r\n" + answerTime + " " + lines + "\r\n";
+                weixinService.writeChatInfo(filename, data);
+
+                //在oprecord表（操作流水记录表）中的更新相应记录
+                oprecord.setUserId(fromUserName);
+                oprecord.setEndTime(answerTime);
+                operatorService.updateOprecord(oprecord);
             }
-            out.close();
-
-            //执行python脚本———聊天
-            Process proc;
-            String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_knowledge_ask&answer.py",content};
-            //String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
-            //String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
-            proc = Runtime.getRuntime().exec(args);
-
-            //使用缓冲流接受程序返回的结果
-            BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(),"GBK"));//注意格式
-            while((line = in.readLine())!=null) {
-                lines += (line + "\n");
-            }
-            in.close();
-            proc.waitFor();
-
-            //主动发送消息给用户
-            TextMessage text = new TextMessage();
-            text.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
-            text.setToUserName(fromUserName);
-            text.setMsgType("text");//文本类型
-            text.setCreateTime(new Date().getTime());//当前时间
-            text.setContent(lines);//返回消息
-            text.setMsgId(MsgId);//消息ID
-
-            //排重
-            boolean isDuplicate = MessageUtil.isDuplicate(map);
-            if(isDuplicate)
-                return;
-
-            //将文本消息转换为xml
-            message = MessageUtil.textMessageToXml(text);
-
-            System.out.println(message);
-
-            //1.创建文本消息对象
-            SendTextMessage sendtextmessage=new SendTextMessage();
-            sendtextmessage.setTouser(fromUserName);  //不区分大小写
-            sendtextmessage.setMsgtype("text");
-            Text texts=new Text();
-            texts.setContent(lines);
-            sendtextmessage.setText(texts);
-
-            //2.获取access_token:根据企业id和通讯录密钥获取access_token,并拼接请求url
-            //String accessToken= WeiXinUtil.getAccessToken(WeiXinParamesUtil.corpId, WeiXinParamesUtil.agentSecret).getToken();
-            //System.out.println("accessToken:"+accessToken);
-
-            //3.发送消息：调用业务类，发送消息
-            weixinService.sendMessage(accessToken, sendtextmessage);
-
-            //获取当前系统时间作为回答时间
-            String answerTime = df.format(new Date());
-
-            //将本轮对话存入TXT文件
-            String filename = "D:/" + fromUserName + ".txt";
-            String data = askTime + "  " + content + "\r\n" + answerTime + " " + lines+ "\r\n";
-            weixinService.writeChatInfo(filename, data);
-
-            //在oprecord表（操作流水记录表）中的更新相应记录
-            oprecord.setUserId(fromUserName);
-            oprecord.setEndTime(answerTime);
-            operatorService.updateOprecord(oprecord);
-            System.out.println(1);
-
         } catch (InterruptedException | DocumentException e) {
             e.printStackTrace();
         } finally {
