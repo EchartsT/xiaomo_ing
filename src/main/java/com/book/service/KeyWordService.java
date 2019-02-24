@@ -24,4 +24,7 @@ public class KeyWordService {
 
         return keyWordDao.matchKeyword(searchWord);
     }
+    public boolean addKeyWord(KeyWord keyWord){
+        return keyWordDao.addKeyWord(keyWord)>0;
+    }
 }

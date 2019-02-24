@@ -19,6 +19,9 @@ public class KeyWordDao {
     private final static String KeyWord_LIST_SQL="SELECT * FROM keyword ORDER BY keywordNum desc";
     private final static String KeyWord_DELETE_SQL="delete from keyword where keywordId = ? ";
     private final static String GET_KeyWord_SQL="SELECT * FROM keyword where keywordName = \"?\"";
+    private final static String GET_RowNum_SQL="select count(*) from keyword where keywordName = ? ";
+    private final static String ADD_KeyWord_SQL="INSERT INTO keyword (keywordName,keywordNum) VALUES(?,?)";
+    private final static String UPDATE_KeyWord_SQL="UPDATE keyword SET keywordNum = ? WHERE keywordName = ?";
 
     @Autowired
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
@@ -61,5 +64,17 @@ public class KeyWordDao {
             }
         });
         return list;
+    }
+
+    public int addKeyWord(KeyWord keyWord){
+        String keywordName = keyWord.getKeywordName();
+        String keywordNum = keyWord.getKeywordName();
+
+        int rowNum = jdbcTemplate.queryForObject(GET_RowNum_SQL, new Object[]{keywordName},Integer.class);
+        if(rowNum == 0){
+            return jdbcTemplate.update(ADD_KeyWord_SQL,new Object[]{keywordName,keywordNum});
+        }else{
+            return jdbcTemplate.update(UPDATE_KeyWord_SQL,new Object[]{keywordNum,keywordName});
+        }
     }
 }

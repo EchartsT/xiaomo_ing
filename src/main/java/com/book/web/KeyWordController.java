@@ -1,6 +1,7 @@
 package com.book.web;
 
 import com.book.service.KeyWordService;
+import com.book.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @Controller
 public class KeyWordController {
@@ -17,7 +19,9 @@ public class KeyWordController {
 
     //显示所有关键词
     @RequestMapping("/keywordList.html")
-    public ModelAndView keywordList(){
+    public ModelAndView keywordList() throws IOException {
+        KeyWordCommand keyWordCommand = new KeyWordCommand();
+        keyWordCommand.getWordsFrequency(FileUtil.createDirectory()+"/"+"allchatdata.txt");
         ModelAndView modelAndView = new ModelAndView("keywordList");
         modelAndView.addObject("list", keyWordService.keywordList());
         return modelAndView;

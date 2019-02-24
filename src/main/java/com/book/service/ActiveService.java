@@ -27,4 +27,11 @@ public class ActiveService {
     public ArrayList<ActiveRank> matchAC(String searchWord){
         return activeDao.matchac(searchWord);
     }
+
+    public boolean addActiveItem(ActiveRank activeRank){
+        return activeDao.addActiveItem(activeRank)>0;
+    }
+    public boolean updateActiveItem(ActiveRank activeRank){
+        return activeDao.updateActiveItem(activeRank)>0;
+    }
 }

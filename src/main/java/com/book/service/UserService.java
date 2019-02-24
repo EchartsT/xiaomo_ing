@@ -25,5 +25,10 @@ public class UserService {
     public ArrayList<User> queryList(String userName){
         return userDao.queryUser(userName);
     }
-
+    public boolean addUser(User user){
+        return userDao.addUser(user)>0;
+    }
+    public boolean updateUser(User user){
+        return userDao.updateUser(user)>0;
+    }
 }

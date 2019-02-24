@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileUtil {
     public static File createDirectory() {
@@ -69,4 +71,19 @@ public class FileUtil {
         }
     }
 
+    //String转Map（用于关键字排名）
+    public static Map<String, Object> transStringToMap(String mapString, String separator, String pairSeparator) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        String[] fSplit = mapString.split(separator);
+        for (int i = 0; i < fSplit.length; i++) {
+            if (fSplit[i]==null||fSplit[i].length()==0) {
+                continue;
+            }
+            String[] sSplit = fSplit[i].split(pairSeparator);
+            String value = fSplit[i].substring(fSplit[i].indexOf(':') + 2, fSplit[i].length());
+            map.put(sSplit[0], value);
+        }
+
+        return map;
+    }
 }

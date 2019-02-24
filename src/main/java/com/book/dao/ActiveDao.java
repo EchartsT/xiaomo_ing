@@ -20,6 +20,9 @@ public class ActiveDao {
     private final static String ActiveRank_DELETE_SQL="delete from activerank where userId = ? ";
     private final static String GET_AC_SQL="SELECT * FROM activerank where userId = ? ";
     private final static String ActiveRank_LIST_ASC_SQL="SELECT * FROM activerank ORDER BY actionTime asc";
+    private final static String GET_RowNum_SQL="select count(*) from activerank where userId = ? ";
+    private final static String ADD_ActiveItem_SQL="INSERT INTO activerank (userId,actionTime) VALUES(?,0)";
+    private final static String UPDATE_ActiveItem_SQL="UPDATE activerank SET actionTime = actionTime + 1 WHERE userId = ? ";
 
     @Autowired
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
@@ -76,5 +79,21 @@ public class ActiveDao {
             }
         });
         return list;
+    }
+
+    public int addActiveItem(ActiveRank activeRank){
+        String userId=activeRank.getUserId();
+        int activeId = activeRank.getActiveId();
+
+        int rowNum = jdbcTemplate.queryForObject(GET_RowNum_SQL, new Object[]{userId},Integer.class);
+        if(rowNum == 0){
+            return jdbcTemplate.update(ADD_ActiveItem_SQL,new Object[]{userId});
+        }return 0;
+    }
+
+    public int updateActiveItem(ActiveRank activeRank){
+        String userId=activeRank.getUserId();
+
+        return jdbcTemplate.update(UPDATE_ActiveItem_SQL,new Object[]{userId});
     }
 }

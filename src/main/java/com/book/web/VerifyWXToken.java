@@ -1,14 +1,13 @@
 package com.book.web;
 
-import com.book.domain.Oprecord;
-import com.book.domain.SendTextMessage;
-import com.book.domain.Text;
+import com.book.domain.*;
+import com.book.service.ActiveService;
 import com.book.service.OperatorService;
+import com.book.service.UserService;
 import com.book.util.ApplicationContextHelper;
 import com.book.util.FileUtil;
 import com.book.util.SignUtil;
 import com.book.util.MessageUtil;
-import com.book.domain.TextMessage;
 import com.book.service.WeixinService;
 import net.sf.json.JSONObject;
 import org.dom4j.DocumentException;
@@ -31,7 +30,9 @@ import java.util.Map;
  */
 
 public class VerifyWXToken extends HttpServlet{
+    private UserService userService= ApplicationContextHelper.getBean(UserService.class);
     private OperatorService operatorService= ApplicationContextHelper.getBean(OperatorService.class);
+    private ActiveService activeService= ApplicationContextHelper.getBean(ActiveService.class);
 
     /**
      * 确认请求来自微信服务器
@@ -63,7 +64,7 @@ public class VerifyWXToken extends HttpServlet{
         request.setCharacterEncoding("UTF-8");//转换编码方式
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();//通过PrintWriter返回消息至微信后台
-        String accessToken = "18_r-ZsoJRDrNlEKFZ2DYB_bF2RPuOu6QxHgyNcXruTryfUxJaJ8-t2NbPcNEUlX1D5Pxahgvs3FzbmEeJFULRreAc-X0tTwAW92qPExl70LKvYNVwjr7z-ToN5VOhF7c6Cl20SLUAj2ImTKACYMHLhAJAPKO";
+        String accessToken = "18_uQPNIfvdSIbD047YybtwGeViKwUdGlpJzRmi2fiyCJXFd-HFz7B9uy1N1ZvKI_srCSaqIOFJx2jrP6eaf-0PgqkgTio76bJSyCj-VHtroeiOjhJ0DcBgj61zSe50XTPnMcr5VN7-YuBXfA1ZTLYeAGAOGT";
 
         //接收消息
         try {
@@ -78,25 +79,32 @@ public class VerifyWXToken extends HttpServlet{
             String line;
             String lines = "";
             String message = null;
-            JSONObject userInfo = null;
+
+            WeixinService weixinService=new WeixinService();
+            JSONObject userInfo = weixinService.getUserInfo(accessToken,fromUserName);//获取用户信息（openID，昵称，订阅状态）
 
             //获取当前系统时间作为用户发送消息时间
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             String askTime = df.format(new Date());
 
-            WeixinService weixinService=new WeixinService();
+
+            User user = new User();
             Oprecord oprecord = new Oprecord();
+            ActiveRank activeRank = new ActiveRank();
 
             //判断是否为事件类型
             if(MessageUtil.MSGTYPE_EVENT.equals(msgType)){
                 if(MessageUtil.MESSAGE_SUBSCIBE.equals(eventType)){//处理订阅事件
-
-                    //获取用户信息（openID，昵称，订阅状态）
-                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
-                    System.out.println(userInfo);
-
                     //创建txt文件用于存储聊天记录
                     weixinService.createTxtFile(fromUserName);
+
+                    //在user表（用户表）中插入该用户的记录
+                    String userName = userInfo.getString("nickname");
+                    boolean isSubscribe = (userInfo.getInt("subscribe") == 1 ? true : false);
+                    user.setUserId(fromUserName);
+                    user.setUserName(userName);
+                    user.setIsSubscribe(isSubscribe);
+                    userService.addUser(user);
 
                     //在oprecord表（操作流水记录表）中插入一条记录用于记录该微信用户的流水
                     oprecord.setUserId(fromUserName);
@@ -105,9 +113,16 @@ public class VerifyWXToken extends HttpServlet{
                     oprecord.setFileName(fromUserName + ".txt");
                     operatorService.addOprecord(oprecord);
 
+                    //在activerank表（活跃度排名表）中插入一条记录用于记录该微信用户的活跃度
+                    activeRank.setUserId(fromUserName);
+                    activeService.addActiveItem(activeRank);
+
                 }else if(MessageUtil.MESSAGE_UNSUBSCIBE.equals(eventType)){//处理取消订阅事件
-                    userInfo = weixinService.getUserInfo(accessToken,fromUserName);
-                    System.out.println(userInfo);
+                    //在user表（用户表）中更改该用户的记录
+                    boolean isSubscribe = (userInfo.getInt("subscribe") == 1 ? true : false);
+                    user.setUserId(fromUserName);
+                    user.setIsSubscribe(isSubscribe);
+                    userService.updateUser(user);
                 }
             }
             else {
@@ -132,8 +147,8 @@ public class VerifyWXToken extends HttpServlet{
                 //执行python脚本———聊天
                 Process proc;
                 //String[] args = new String[]{"python", "D:\\python\\code\\chatbot_by_similarity\\demo\\demo_knowledge_ask&answer.py", content};
-                //String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
-                String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
+                String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
+                //String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
                 proc = Runtime.getRuntime().exec(args);
 
                 //使用缓冲流接受程序返回的结果
@@ -181,15 +196,23 @@ public class VerifyWXToken extends HttpServlet{
                 //获取当前系统时间作为回答时间
                 String answerTime = df.format(new Date());
 
+                //将本次用户发送的消息存于TXT文件（用于词频统计）
+                String alldataFilename = FileUtil.createDirectory()+"/"+"allchatdata.txt";
+                weixinService.writeChatInfo(alldataFilename, content + "，");
+
                 //将本轮对话存入TXT文件
                 String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
                 String data = askTime + "  " + content + "\r\n" + answerTime + " " + lines + "\r\n";
                 weixinService.writeChatInfo(filename, data);
 
-                //在oprecord表（操作流水记录表）中的更新相应记录
+                //在oprecord表（操作流水记录表）中更新相应记录
                 oprecord.setUserId(fromUserName);
                 oprecord.setEndTime(answerTime);
                 operatorService.updateOprecord(oprecord);
+
+                //在activerank表（活跃度排名表）中更新相应记录
+                activeRank.setUserId(fromUserName);
+                activeService.updateActiveItem(activeRank);
             }
         } catch (InterruptedException | DocumentException e) {
             e.printStackTrace();
