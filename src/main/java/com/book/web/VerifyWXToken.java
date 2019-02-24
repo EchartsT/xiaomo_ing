@@ -4,10 +4,7 @@ import com.book.domain.*;
 import com.book.service.ActiveService;
 import com.book.service.OperatorService;
 import com.book.service.UserService;
-import com.book.util.ApplicationContextHelper;
-import com.book.util.FileUtil;
-import com.book.util.SignUtil;
-import com.book.util.MessageUtil;
+import com.book.util.*;
 import com.book.service.WeixinService;
 import net.sf.json.JSONObject;
 import org.dom4j.DocumentException;
@@ -20,6 +17,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -64,7 +62,42 @@ public class VerifyWXToken extends HttpServlet{
         request.setCharacterEncoding("UTF-8");//转换编码方式
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();//通过PrintWriter返回消息至微信后台
-        String accessToken = "18_uQPNIfvdSIbD047YybtwGeViKwUdGlpJzRmi2fiyCJXFd-HFz7B9uy1N1ZvKI_srCSaqIOFJx2jrP6eaf-0PgqkgTio76bJSyCj-VHtroeiOjhJ0DcBgj61zSe50XTPnMcr5VN7-YuBXfA1ZTLYeAGAOGT";
+        //String accessToken = "18_uQPNIfvdSIbD047YybtwGeViKwUdGlpJzRmi2fiyCJXFd-HFz7B9uy1N1ZvKI_srCSaqIOFJx2jrP6eaf-0PgqkgTio76bJSyCj-VHtroeiOjhJ0DcBgj61zSe50XTPnMcr5VN7-YuBXfA1ZTLYeAGAOGT";
+
+        /**
+         * accessToken超过两小时重新获取
+         */
+        String accessToken =null;
+        AccessToken accessTokenObject = new AccessToken();
+        accessTokenObject = operatorService.getAccess();
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-M-d HH:mm:ss");
+        Date oldtime = new Date();
+        Date newtime =new Date();
+        if(accessTokenObject.getAccess_token() != null ){
+            //判断是不是间隔两个小时
+            try {
+                oldtime= sdf.parse(accessTokenObject.getAccess_time());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            try {
+                newtime = sdf.parse(sdf.format(new Date()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            long cha = newtime.getTime() - oldtime.getTime();
+            double result = cha * 1.0 / (1000 * 60 * 60);
+            if(result >2){
+                //accessTokenObject=WeiXinUtil.getAccessToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+                accessTokenObject=WeiXinUtil.getToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+                operatorService.deleteAccess();
+                operatorService.updateAccess(accessTokenObject);
+            }
+        }else {
+            accessTokenObject= WeiXinUtil.getToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+            operatorService.updateAccess(accessTokenObject);
+        }
+        accessToken = accessTokenObject.getAccess_token();
 
         //接收消息
         try {
