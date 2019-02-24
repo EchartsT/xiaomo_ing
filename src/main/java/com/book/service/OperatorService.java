@@ -2,6 +2,8 @@ package com.book.service;
 
 
 import com.book.dao.OperatorDao;
+import com.book.dao.WeixinDAO;
+import com.book.domain.AccessToken;
 import com.book.domain.Oprecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.spel.ast.Operator;
@@ -34,8 +36,29 @@ public class OperatorService {
     public boolean updateOprecord(Oprecord oprecord){
         return operatorDao.updateOprecord(oprecord)>0;
     }
-}
 
+    //微信
+    private WeixinDAO weixinDAO;
+
+    @Autowired
+    public void setWeixinDAO(WeixinDAO weixinDAO){
+        this.weixinDAO=weixinDAO;
+    }
+
+    //获取已有的accesstoken
+    public AccessToken getAccess(){
+        return weixinDAO.getAccess();
+    }
+
+    //更新已有的accesstoken
+    public void updateAccess(AccessToken accessToken){
+        weixinDAO.updateAccess(accessToken);
+    }
+    //删除所有记录
+    public void deleteAccess(){
+        weixinDAO.deleteAccess();
+    }
+}
 
 
 

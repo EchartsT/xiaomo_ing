@@ -1,14 +1,8 @@
 package com.book.web;
 
-import com.book.domain.Oprecord;
-import com.book.domain.SendTextMessage;
-import com.book.domain.Text;
+import com.book.domain.*;
 import com.book.service.OperatorService;
-import com.book.util.ApplicationContextHelper;
-import com.book.util.FileUtil;
-import com.book.util.SignUtil;
-import com.book.util.MessageUtil;
-import com.book.domain.TextMessage;
+import com.book.util.*;
 import com.book.service.WeixinService;
 import net.sf.json.JSONObject;
 import org.dom4j.DocumentException;
@@ -21,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
@@ -33,6 +28,7 @@ import java.util.Map;
 public class VerifyWXToken extends HttpServlet{
     private OperatorService operatorService= ApplicationContextHelper.getBean(OperatorService.class);
 
+    //private WeixinService weixinService= ApplicationContextHelper.getBean(WeixinService.class);
     /**
      * 确认请求来自微信服务器
      */
@@ -63,9 +59,45 @@ public class VerifyWXToken extends HttpServlet{
         request.setCharacterEncoding("UTF-8");//转换编码方式
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();//通过PrintWriter返回消息至微信后台
-        String accessToken = "18_r-ZsoJRDrNlEKFZ2DYB_bF2RPuOu6QxHgyNcXruTryfUxJaJ8-t2NbPcNEUlX1D5Pxahgvs3FzbmEeJFULRreAc-X0tTwAW92qPExl70LKvYNVwjr7z-ToN5VOhF7c6Cl20SLUAj2ImTKACYMHLhAJAPKO";
 
-        //接收消息
+        /**
+         * accessToken超过两小时重新获取
+         */
+        String accessToken =null;
+        AccessToken accessTokenObject = new AccessToken();
+        accessTokenObject = operatorService.getAccess();
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-M-d HH:mm:ss");
+        Date oldtime = new Date();
+        Date newtime =new Date();
+        if(accessTokenObject.getAccess_token() != null ){
+            //判断是不是间隔两个小时
+            try {
+                oldtime= sdf.parse(accessTokenObject.getAccess_time());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            try {
+                 newtime = sdf.parse(sdf.format(new Date()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            long cha = newtime.getTime() - oldtime.getTime();
+            double result = cha * 1.0 / (1000 * 60 * 60);
+            if(result >2){
+                accessTokenObject=WeiXinUtil.getAccessToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+                operatorService.deleteAccess();
+                operatorService.updateAccess(accessTokenObject);
+            }
+        }else {
+            accessTokenObject=WeiXinUtil.getAccessToken(WeiXinParamesUtil.appid,WeiXinParamesUtil.secret);
+            operatorService.updateAccess(accessTokenObject);
+        }
+            accessToken = accessTokenObject.getAccess_token();
+        //String accessToken = "18_r-ZsoJRDrNlEKFZ2DYB_bF2RPuOu6QxHgyNcXruTryfUxJaJ8-t2NbPcNEUlX1D5Pxahgvs3FzbmEeJFULRreAc-X0tTwAW92qPExl70LKvYNVwjr7z-ToN5VOhF7c6Cl20SLUAj2ImTKACYMHLhAJAPKO";
+
+        /**
+         * 接收消息
+         */
         try {
             Map<String,String> map = MessageUtil.xmlToMap(request);
             String fromUserName = map.get("FromUserName");//发送方帐号（一个OpenID）

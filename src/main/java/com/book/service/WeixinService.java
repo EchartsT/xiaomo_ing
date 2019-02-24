@@ -1,15 +1,17 @@
 package com.book.service;
 
+import com.book.dao.WeixinDAO;
+import com.book.domain.AccessToken;
 import com.book.util.FileUtil;
 import net.sf.json.JSONObject;
 import com.google.gson.Gson;
 import com.book.domain.BaseMessage;
 import com.book.util.WeiXinUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
 
 public class WeixinService {
 
@@ -70,4 +72,5 @@ public class WeixinService {
             e.printStackTrace();
         }
     }
+
 }

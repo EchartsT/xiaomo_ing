@@ -1,5 +1,6 @@
 package com.book.dao;
 
+import com.book.domain.AccessToken;
 import com.book.domain.Lend;
 import com.book.domain.Oprecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ public class OperatorDao {
     public int deleteopList(String operatorId){
         return jdbcTemplate.update(Oprecord_DELETE_SQL,operatorId);
     }
+
     public ArrayList<Oprecord> matchOP(String searchWord){
         final ArrayList<Oprecord> list=new ArrayList<Oprecord>();
         jdbcTemplate.query(GET_OP_SQL, new Object[]{searchWord} ,new RowCallbackHandler() {
@@ -88,4 +90,6 @@ public class OperatorDao {
 
         return jdbcTemplate.update(UPDATE_Oprecord_SQL,new Object[]{endTime,userId});
     }
+
+
 }

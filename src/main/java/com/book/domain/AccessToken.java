@@ -5,23 +5,23 @@ package com.book.domain;
  */
 public class AccessToken {  
     // 获取到的凭证  
-    private String token;  
-    // 凭证有效时间，单位：秒  
-    private int expiresIn;  
-  
-    public String getToken() {  
-        return token;  
-    }  
-  
-    public void setToken(String token) {  
-        this.token = token;  
-    }  
-  
-    public int getExpiresIn() {  
-        return expiresIn;  
-    }  
-  
-    public void setExpiresIn(int expiresIn) {  
-        this.expiresIn = expiresIn;  
-    }  
-}  
+    private String access_token;
+    // 获取时间
+    private String access_time;
+
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
+    }
+
+    public String getAccess_time() {
+        return access_time;
+    }
+
+    public void setAccess_time(String access_time) {
+        this.access_time = access_time;
+    }
+}
