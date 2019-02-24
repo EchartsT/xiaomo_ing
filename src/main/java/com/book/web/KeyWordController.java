@@ -21,7 +21,7 @@ public class KeyWordController {
     @RequestMapping("/keywordList.html")
     public ModelAndView keywordList() throws IOException {
         KeyWordCommand keyWordCommand = new KeyWordCommand();
-        //keyWordCommand.getWordsFrequency(FileUtil.createDirectory()+"/"+"allchatdata.txt");
+        keyWordCommand.getWordsFrequency(FileUtil.createDirectory()+"/"+"allchatdata.txt");
         ModelAndView modelAndView = new ModelAndView("keywordList");
         modelAndView.addObject("list", keyWordService.keywordList());
         return modelAndView;

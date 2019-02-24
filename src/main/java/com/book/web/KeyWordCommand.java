@@ -35,7 +35,6 @@ public class KeyWordCommand {
             line = tmpline.replace("Counter({","").replace("})","").replace("'","");
             Map<String, Object> map = FileUtil.transStringToMap(line, ", ", ": ");
             for (String key : map.keySet()) {
-                System.out.println("key:" + key + ", value:" + map.get(key));
                 keyWord.setKeywordName(key);
                 keyWord.setKeywordNum(Integer.parseInt((String)map.get(key)));
                 keyWordService.addKeyWord(keyWord);

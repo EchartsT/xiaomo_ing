@@ -68,8 +68,7 @@ public class KeyWordDao {
 
     public int addKeyWord(KeyWord keyWord){
         String keywordName = keyWord.getKeywordName();
-        String keywordNum = keyWord.getKeywordName();
-
+        int keywordNum = keyWord.getKeywordNum();
         int rowNum = jdbcTemplate.queryForObject(GET_RowNum_SQL, new Object[]{keywordName},Integer.class);
         if(rowNum == 0){
             return jdbcTemplate.update(ADD_KeyWord_SQL,new Object[]{keywordName,keywordNum});
