@@ -178,31 +178,55 @@ public class VerifyWXToken extends HttpServlet{
                 user = userService.queryUserById(fromUserName);
                 //判断是否为文本消息
                 if (MessageUtil.MESSAGE_TEXT.equals(msgType)) {
-                    //不论发送什么，先被动回复一句“正在查询，请稍候...”
-                    TextMessage pretext = new TextMessage();
-                    pretext.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
-                    pretext.setToUserName(fromUserName);
-                    pretext.setMsgType("text");//文本类型
-                    pretext.setCreateTime(new Date().getTime());//当前时间
-                    pretext.setContent("正在查询，请稍候...");//返回消息
-                    pretext.setMsgId(MsgId);//消息ID
-
-                    //将文本消息转换为xml
-                    message = MessageUtil.textMessageToXml(pretext);
-                    out.print(message);//返回消息
+                    if(content.equals("1")){
+                        TextMessage pretext = new TextMessage();
+                        pretext.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
+                        pretext.setToUserName(fromUserName);
+                        pretext.setMsgType("text");//文本类型
+                        pretext.setCreateTime(new Date().getTime());//当前时间
+                        pretext.setContent("进入日常聊天");//返回消息
+                        pretext.setMsgId(MsgId);//消息ID
+                        //将文本消息转换为xml
+                        message = MessageUtil.textMessageToXml(pretext);
+                        out.print(message);//返回消息
+                        user.setUserId(fromUserName);
+                        user.setChatData("1");
+                        userService.updateUser_chatdata(user);
+                        return;
+                    }else if(content.equals("2")){
+                        TextMessage pretext = new TextMessage();
+                        pretext.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
+                        pretext.setToUserName(fromUserName);
+                        pretext.setMsgType("text");//文本类型
+                        pretext.setCreateTime(new Date().getTime());//当前时间
+                        pretext.setContent("进入专业对话");//返回消息
+                        pretext.setMsgId(MsgId);//消息ID
+                        //将文本消息转换为xml
+                        message = MessageUtil.textMessageToXml(pretext);
+                        out.print(message);//返回消息
+                        user.setUserId(fromUserName);
+                        user.setChatData("2");
+                        userService.updateUser_chatdata(user);
+                        return;
+                    } else{
+                        //不论发送什么，先被动回复一句“正在查询，请稍候...”
+                        TextMessage pretext = new TextMessage();
+                        pretext.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
+                        pretext.setToUserName(fromUserName);
+                        pretext.setMsgType("text");//文本类型
+                        pretext.setCreateTime(new Date().getTime());//当前时间
+                        pretext.setContent("正在查询，请稍候...");//返回消息
+                        pretext.setMsgId(MsgId);//消息ID
+                        //将文本消息转换为xml
+                        message = MessageUtil.textMessageToXml(pretext);
+                        out.print(message);//返回消息
+                    }
                     System.out.println(message);
                 }
                 out.close();
-                String[] args = null;
-                if(content.equals("2")) {
-                    user.setUserId(fromUserName);
-                    user.setChatData("2");
-                    userService.updateUser_chatdata(user);
-                }else if(content.equals("1")) {
-                    user.setUserId(fromUserName);
-                    user.setChatData("1");
-                    userService.updateUser_chatdata(user);
-                }
+                String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
+
+                user = userService.queryUserById(fromUserName);
                 if(user.getChatData().equals("1"))
                     args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
                 else if(user.getChatData().equals("2"))
@@ -210,9 +234,6 @@ public class VerifyWXToken extends HttpServlet{
 
                 //执行python脚本———聊天
                 Process proc;
-                //String[] args = new String[]{"python", "D:\\python\\code\\chatbot_by_similarity\\demo\\demo_knowledge_ask&answer.py", content};
-                //String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
-                //String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
                 proc = Runtime.getRuntime().exec(args);
 
                 //使用缓冲流接受程序返回的结果
@@ -222,62 +243,57 @@ public class VerifyWXToken extends HttpServlet{
                 }
                 in.close();
                 proc.waitFor();
-                if(!content.equals("1") && !content.equals("2")){
-                    //主动发送消息给用户
-                    TextMessage text = new TextMessage();
-                    text.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
-                    text.setToUserName(fromUserName);
-                    text.setMsgType("text");//文本类型
-                    text.setCreateTime(new Date().getTime());//当前时间
-                    text.setContent(lines);//返回消息
-                    text.setMsgId(MsgId);//消息ID
 
-                    //排重
-                    boolean isDuplicate = MessageUtil.isDuplicate(map);
-                    if (isDuplicate)
-                        return;
+                //主动发送消息给用户
+                TextMessage text = new TextMessage();
+                text.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
+                text.setToUserName(fromUserName);
+                text.setMsgType("text");//文本类型
+                text.setCreateTime(new Date().getTime());//当前时间
+                text.setContent(lines);//返回消息
+                text.setMsgId(MsgId);//消息ID
 
-                    //将文本消息转换为xml
-                    message = MessageUtil.textMessageToXml(text);
+                //排重
+                boolean isDuplicate = MessageUtil.isDuplicate(map);
+                if (isDuplicate)
+                    return;
 
-                    System.out.println(message);
+                //将文本消息转换为xml
+                message = MessageUtil.textMessageToXml(text);
 
-                    //1.创建文本消息对象
-                    SendTextMessage sendtextmessage = new SendTextMessage();
-                    sendtextmessage.setTouser(fromUserName);  //不区分大小写
-                    sendtextmessage.setMsgtype("text");
-                    Text texts = new Text();
-                    texts.setContent(lines);
-                    sendtextmessage.setText(texts);
+                System.out.println(message);
 
-                    //2.获取access_token:根据企业id和通讯录密钥获取access_token,并拼接请求url
-                    //String accessToken= WeiXinUtil.getAccessToken(WeiXinParamesUtil.corpId, WeiXinParamesUtil.agentSecret).getToken();
-                    //System.out.println("accessToken:"+accessToken);
+                //创建文本消息对象
+                SendTextMessage sendtextmessage = new SendTextMessage();
+                sendtextmessage.setTouser(fromUserName);  //不区分大小写
+                sendtextmessage.setMsgtype("text");
+                Text texts = new Text();
+                texts.setContent(lines);
+                sendtextmessage.setText(texts);
 
-                    //3.发送消息：调用业务类，发送消息
-                    weixinService.sendMessage(accessToken, sendtextmessage);
+                //发送消息：调用业务类，发送消息
+                weixinService.sendMessage(accessToken, sendtextmessage);
 
-                    //获取当前系统时间作为回答时间
-                    String answerTime = df.format(new Date());
+                //获取当前系统时间作为回答时间
+                String answerTime = df.format(new Date());
 
-                    //将本次用户发送的消息存于TXT文件（用于词频统计）
-                    String alldataFilename = FileUtil.createDirectory()+"/"+"allchatdata.txt";
-                    weixinService.writeChatInfo(alldataFilename, content + "，");
+                //将本次用户发送的消息存于TXT文件（用于词频统计）
+                String alldataFilename = FileUtil.createDirectory()+"/"+"allchatdata.txt";
+                weixinService.writeChatInfo(alldataFilename, content + "，");
 
-                    //将本轮对话存入TXT文件
-                    String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
-                    String data = askTime + "  " + content + "\r\n" + answerTime + " " + lines + "\r\n";
-                    weixinService.writeChatInfo(filename, data);
+                //将本轮对话存入TXT文件
+                String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
+                String data = askTime + "  " + content + "\r\n" + answerTime + " " + lines + "\r\n";
+                weixinService.writeChatInfo(filename, data);
 
-                    //在oprecord表（操作流水记录表）中更新相应记录
-                    oprecord.setUserId(fromUserName);
-                    oprecord.setEndTime(answerTime);
-                    operatorService.updateOprecord(oprecord);
+                //在oprecord表（操作流水记录表）中更新相应记录
+                oprecord.setUserId(fromUserName);
+                oprecord.setEndTime(answerTime);
+                operatorService.updateOprecord(oprecord);
 
-                    //在activerank表（活跃度排名表）中更新相应记录
-                    activeRank.setUserId(fromUserName);
-                    activeService.updateActiveItem(activeRank);
-                }
+                //在activerank表（活跃度排名表）中更新相应记录
+                activeRank.setUserId(fromUserName);
+                activeService.updateActiveItem(activeRank);
             }
         } catch (InterruptedException | DocumentException e) {
             e.printStackTrace();

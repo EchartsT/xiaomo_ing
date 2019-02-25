@@ -48,6 +48,7 @@ public class UserDao {
         user.setUserName(resultSet.getString("userName"));
         user.setIsSubscribe(resultSet.getBoolean("isSubscribe"));
         user.setFileName(resultSet.getString("fileName"));
+        user.setChatData(resultSet.getString("chatData"));
 
     }
 
