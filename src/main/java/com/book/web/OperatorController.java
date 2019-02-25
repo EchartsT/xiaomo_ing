@@ -71,6 +71,7 @@ public class OperatorController {
       String line = "";
       while ((line = br.readLine())!= null){
          out.println(line);
+         out.println("<br>");
       }
       br.close();
       out.flush();

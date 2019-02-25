@@ -43,11 +43,10 @@ public class KeyWordController {
     }
     //搜索
     @RequestMapping("/querykeyword.html")
-    public ModelAndView queryOperatorDo(HttpServletRequest request, String searchWord) throws UnsupportedEncodingException {
+    public ModelAndView queryOperatorDo(HttpServletRequest request) throws UnsupportedEncodingException {
         ModelAndView modelAndView = new ModelAndView("keywordList");
-        searchWord = new String(searchWord.getBytes(),"UTF-8");
-        modelAndView.addObject("list", keyWordService.matchKeyword(searchWord));
+        String str = new String(request.getParameter("searchWord").getBytes("ISO-8859-1"),"utf-8");
+        modelAndView.addObject("list", keyWordService.matchKeyword(str));
         return modelAndView;
     }
-
 }

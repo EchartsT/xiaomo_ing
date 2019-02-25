@@ -18,7 +18,7 @@ public class KeyWordDao {
 
     private final static String KeyWord_LIST_SQL="SELECT * FROM keyword ORDER BY keywordNum desc";
     private final static String KeyWord_DELETE_SQL="delete from keyword where keywordId = ? ";
-    private final static String GET_KeyWord_SQL="SELECT * FROM keyword where keywordName = \"?\"";
+    private final static String GET_KeyWord_SQL="SELECT * FROM keyword where keywordName =?";
     private final static String GET_RowNum_SQL="select count(*) from keyword where keywordName = ? ";
     private final static String ADD_KeyWord_SQL="INSERT INTO keyword (keywordName,keywordNum) VALUES(?,?)";
     private final static String UPDATE_KeyWord_SQL="UPDATE keyword SET keywordNum = ? WHERE keywordName = ?";

@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,8 +50,8 @@ public class UserController {
         }
     }
     @RequestMapping("/queryUser.html")
-    public ModelAndView queryUser(HttpServletRequest request,RedirectAttributes redirectAttributes){
-        String userName = request.getParameter("userName");
+    public ModelAndView queryUser(HttpServletRequest request,RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
+        String userName =new String(request.getParameter("userName").getBytes("ISO-8859-1"),"utf-8");
         ArrayList<User> userlist = userService.queryList(userName);
         ModelAndView modelAndView=new ModelAndView("userlist");
         modelAndView.addObject("users",userlist);

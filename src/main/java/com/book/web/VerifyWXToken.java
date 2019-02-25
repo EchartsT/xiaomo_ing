@@ -218,8 +218,13 @@ public class VerifyWXToken extends HttpServlet{
                 user = userService.queryUserById(fromUserName);
                 if(user.getChatData().equals("1"))
                     args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
-                else if(user.getChatData().equals("2"))
+                else if(user.getChatData().equals("2")){
+                    //将本次用户发送的消息存于TXT文件（用于词频统计）
+                    String alldataFilename = FileUtil.createDirectory()+"/"+"allchatdata.txt";
+                    weixinService.writeChatInfo(alldataFilename, content + "，");
+
                     args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
+                }
 
                 //执行python脚本———聊天
                 Process proc;
@@ -266,13 +271,9 @@ public class VerifyWXToken extends HttpServlet{
                 //获取当前系统时间作为回答时间
                 String answerTime = df.format(new Date());
 
-                //将本次用户发送的消息存于TXT文件（用于词频统计）
-                String alldataFilename = FileUtil.createDirectory()+"/"+"allchatdata.txt";
-                weixinService.writeChatInfo(alldataFilename, content + "，");
-
                 //将本轮对话存入TXT文件
                 String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
-                String data = askTime + "  " + content + "\r\n" + answerTime + " " + lines + "\r\n";
+                String data = askTime + "  " + "用户："+ content + "\r\n" + answerTime + " " + "小莫："+ lines + "\r\n";
                 weixinService.writeChatInfo(filename, data);
 
                 //在oprecord表（操作流水记录表）中更新相应记录
