@@ -209,19 +209,8 @@ public class VerifyWXToken extends HttpServlet{
                         userService.updateUser_chatdata(user);
                         return;
                     } else{
-                        //不论发送什么，先被动回复一句“正在查询，请稍候...”
-                        TextMessage pretext = new TextMessage();
-                        pretext.setFromUserName(toUserName);//注意，这里发送者与接收者调换了
-                        pretext.setToUserName(fromUserName);
-                        pretext.setMsgType("text");//文本类型
-                        pretext.setCreateTime(new Date().getTime());//当前时间
-                        pretext.setContent("正在查询，请稍候...");//返回消息
-                        pretext.setMsgId(MsgId);//消息ID
-                        //将文本消息转换为xml
-                        message = MessageUtil.textMessageToXml(pretext);
-                        out.print(message);//返回消息
+                        out.print("");//返回消息
                     }
-                    System.out.println(message);
                 }
                 out.close();
                 String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
