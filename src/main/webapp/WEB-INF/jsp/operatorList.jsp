@@ -127,9 +127,10 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${list}" var="alog">
+            <c:forEach items="${list}" var="alog" varStatus="s">
                 <tr  v-for="alog in list">
-                    <td><c:out value="${alog.operatorId}"></c:out></td>
+                    <%--<td><c:out value="${alog.operatorId}"></c:out></td>--%>
+                    <td>${s.count}</td>
                     <td><c:out value="${alog.userId}"></c:out></td>
                     <td><c:out value="${alog.startTime}"></c:out></td>
                     <td><c:out value="${alog.endTime}"></c:out></td>

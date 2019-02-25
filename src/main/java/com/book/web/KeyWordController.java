@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 @Controller
 public class KeyWordController {
@@ -42,8 +43,9 @@ public class KeyWordController {
     }
     //搜索
     @RequestMapping("/querykeyword.html")
-    public ModelAndView queryOperatorDo(HttpServletRequest request, String searchWord) {
+    public ModelAndView queryOperatorDo(HttpServletRequest request, String searchWord) throws UnsupportedEncodingException {
         ModelAndView modelAndView = new ModelAndView("keywordList");
+        searchWord = new String(searchWord.getBytes(),"UTF-8");
         modelAndView.addObject("list", keyWordService.matchKeyword(searchWord));
         return modelAndView;
     }
