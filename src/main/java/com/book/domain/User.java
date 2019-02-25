@@ -7,7 +7,7 @@ public class User implements Serializable {
     private String userId;
     private String userName;
     private boolean isSubscribe;
-    private InputStream chatData;
+    private String chatData;
     private String fileName;
 
     public String getFileName() {
@@ -44,11 +44,11 @@ public class User implements Serializable {
         isSubscribe = subscribe;
     }
 
-    public InputStream getChatData() {
+    public String getChatData() {
         return chatData;
     }
 
-    public void setChatData(InputStream chatData) {
+    public void setChatData(String chatData) {
         this.chatData = chatData;
     }
 }

@@ -32,6 +32,7 @@ public class UserDao {
     private final static String GET_RowNum_SQL="select count(*) from user where userId = ? ";
     private final static String ADD_User_SQL="INSERT INTO user (userId,userName,isSubscribe) VALUES(?,?,?)";
     private final static String UPDATE_User_SQL="UPDATE user SET isSubscribe = ? WHERE userId = ?";
+    private final static String UPDATE_UserChatData_SQL="UPDATE user SET chatData = ? WHERE userId = ?";
 
 
     public int addUser(User user){
@@ -119,6 +120,11 @@ public class UserDao {
 
         return jdbcTemplate.update(UPDATE_User_SQL,new Object[]{String.valueOf(isSubscribe),userId});
     }
+    public int updateUser_chatdata(User user){
+        String userId = user.getUserId();
+        String chatData = user.getChatData();
 
+        return jdbcTemplate.update(UPDATE_UserChatData_SQL,new Object[]{chatData,userId});
+    }
 
 }

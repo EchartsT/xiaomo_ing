@@ -42,5 +42,7 @@ public class UserService {
     public boolean updateUser(User user){
         return userDao.updateUser(user)>0;
     }
-
+    public boolean updateUser_chatdata(User user){
+        return userDao.updateUser_chatdata(user)>0;
+    }
 }
