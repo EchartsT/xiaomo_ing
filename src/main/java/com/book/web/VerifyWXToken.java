@@ -133,13 +133,13 @@ public class VerifyWXToken extends HttpServlet{
                     pretext.setToUserName(fromUserName);
                     pretext.setMsgType("text");//文本类型
                     pretext.setCreateTime(new Date().getTime());//当前时间
-                    pretext.setContent("1:日常聊天，2：专业聊天");//返回消息
+                    pretext.setContent("1:日常聊天，2:专业聊天");//返回消息
                     pretext.setMsgId(MsgId);//消息ID
-                    out.close();
 
                     //将文本消息转换为xml
                     message = MessageUtil.textMessageToXml(pretext);
                     out.print(message);//返回消息
+                    out.close();
                     System.out.println(message);
 
                     //创建txt文件用于存储聊天记录
