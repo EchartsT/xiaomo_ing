@@ -23,7 +23,7 @@ public class OperatorDao {
     private final static String Oprecord_DELETE_SQL="delete from oprecord where operatorId = ? ";
     private final static String GET_OP_SQL="SELECT * FROM oprecord where userId = ? ";
     private final static String GET_RowNum_SQL="select count(*) from oprecord where userId = ? ";
-    private final static String ADD_Oprecord_SQL="INSERT INTO oprecord (operatorId,userId,startTime,fileName) VALUES(?,?,?,?)";
+    private final static String ADD_Oprecord_SQL="INSERT INTO oprecord (operatorId,userId,startTime,endTime,fileName) VALUES(?,?,?,?,?)";
     private final static String UPDATE_Oprecord_SQL="UPDATE oprecord SET endTime = ? WHERE userId = ?";
 
     @Autowired
@@ -80,7 +80,7 @@ public class OperatorDao {
 
         int rowNum = jdbcTemplate.queryForObject(GET_RowNum_SQL, new Object[]{userId},Integer.class);
         if(rowNum == 0){
-            return jdbcTemplate.update(ADD_Oprecord_SQL,new Object[]{operatorId,userId,startTime,fileName});
+            return jdbcTemplate.update(ADD_Oprecord_SQL,new Object[]{operatorId,userId,startTime,startTime,fileName});
         }return 0;
     }
 

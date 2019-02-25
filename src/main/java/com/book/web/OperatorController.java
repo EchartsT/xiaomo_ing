@@ -62,10 +62,10 @@ public class OperatorController {
    @RequestMapping("/openfile.html")
    public void openFile(HttpServletRequest request, HttpServletResponse response )throws IOException {
       String fileName = request.getParameter("fileName");
-      String filePath = "d:/" + fileName + ".txt";
-      response.setContentType("text/html;charset=UTF-8");
+      String filePath = "D:\\apache-tomcat-7.0.84\\bin\\chatData\\" + fileName;
+      response.setContentType("text/html;charset=GBK");
 
-      InputStreamReader isr = new InputStreamReader(new FileInputStream(filePath), "UTF-8");
+      InputStreamReader isr = new InputStreamReader(new FileInputStream(filePath), "GBK");
       BufferedReader br = new BufferedReader(isr);
       PrintWriter out = response.getWriter();
       String line = "";

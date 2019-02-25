@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 public class FileController {
     @RequestMapping("/filedownload.html")
     public void handleFileDownload(@RequestParam String fileName, HttpServletResponse response) throws Exception{
-        String filePath = "/Users/ashley/xiaomo_ing/chatData/"+fileName;
+//        String filePath = "/Users/ashley/xiaomo_ing/chatData/"+fileName;
+        String filePath = "D:\\apache-tomcat-7.0.84\\bin\\chatData\\"+fileName;
         DownloadUtil du = new DownloadUtil();
         du.download(filePath, fileName, response, false);
     }
