@@ -23,8 +23,9 @@ public class OperatorDao {
     private final static String Oprecord_DELETE_SQL="delete from oprecord where operatorId = ? ";
     private final static String GET_OP_SQL="SELECT * FROM oprecord where userId = ? ";
     private final static String GET_RowNum_SQL="select count(*) from oprecord where userId = ? ";
-    private final static String ADD_Oprecord_SQL="INSERT INTO oprecord (operatorId,userId,startTime,endTime,fileName) VALUES(?,?,?,?,?)";
+    private final static String ADD_Oprecord_SQL="INSERT INTO oprecord (operatorId,userId,startTime,endTime,fileName,active) VALUES(?,?,?,?,?,'0')";
     private final static String UPDATE_Oprecord_SQL="UPDATE oprecord SET endTime = ? WHERE userId = ?";
+    private final static String UPDATE_Oprecord_SQL2="UPDATE oprecord SET lastQuestion = ?,active = '1',messagetype = ? WHERE userId = ?";
 
     @Autowired
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
@@ -91,5 +92,26 @@ public class OperatorDao {
         return jdbcTemplate.update(UPDATE_Oprecord_SQL,new Object[]{endTime,userId});
     }
 
+    public int updateOprecord2(Oprecord oprecord){
+        String userId=oprecord.getUserId();
+        String lastQuestion = oprecord.getLastQuestion();
+        String messagetype = oprecord.getMessagetype();
 
+        return jdbcTemplate.update(UPDATE_Oprecord_SQL2,new Object[]{lastQuestion,messagetype,userId});
+    }
+
+    public Oprecord queryOprecordById(String userId){
+        Oprecord op = new Oprecord();
+        jdbcTemplate.query(GET_OP_SQL, new Object[]{userId}, new RowCallbackHandler() {
+            public void processRow(ResultSet resultSet) throws SQLException {
+                    op.setOperatorId(resultSet.getString("operatorId"));
+                    op.setUserId(resultSet.getString("userId"));
+                    op.setStartTime(resultSet.getTimestamp("startTime").toString());
+                    op.setEndTime(resultSet.getTimestamp("endTime").toString());
+                    op.setFileName(resultSet.getString("fileName"));
+                    op.setLastAnswer(resultSet.getString("lastAnswer"));
+            }
+        });
+        return op;
+    }
 }

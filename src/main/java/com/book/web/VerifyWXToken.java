@@ -109,7 +109,6 @@ public class VerifyWXToken extends HttpServlet{
             String MsgId = map.get("MsgId");//消息ID
             String eventType = map.get("Event");//事件类型
 
-            String line;
             String lines = "";
             String message = null;
 
@@ -213,30 +212,34 @@ public class VerifyWXToken extends HttpServlet{
                     }
                 }
                 out.close();
-                String[] args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
 
                 user = userService.queryUserById(fromUserName);
-                if(user.getChatData().equals("1"))
-                    args = new String[] {"python","D:\\python\\code\\chatbot_by_similarity\\demo\\demo_chat_ask&answer.py",content};
-                else if(user.getChatData().equals("2")){
+
+                //将用户发送的最新一条消息、消息类型存入oprecord表
+                oprecord.setUserId(fromUserName);
+                oprecord.setLastQuestion(content);
+                oprecord.setMessagetype(user.getChatData());
+                operatorService.updateOprecord2(oprecord);
+
+                if(user.getChatData().equals("2")){
                     //将本次用户发送的消息存于TXT文件（用于词频统计）
                     String alldataFilename = FileUtil.createDirectory()+"/"+"allchatdata.txt";
                     weixinService.writeChatInfo(alldataFilename, content + "，");
 
-                    args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\QASystemOnMedicalKG\\chatbot_graph.py",content};
+                    try {
+                        Thread.sleep (500) ;
+                    } catch (InterruptedException ie){
+                    }
+                }else if(user.getChatData().equals("1")){
+                    try {
+                        Thread.sleep (7500) ;
+                    } catch (InterruptedException ie){
+                    }
                 }
 
-                //执行python脚本———聊天
-                Process proc;
-                proc = Runtime.getRuntime().exec(args);
-
-                //使用缓冲流接受程序返回的结果
-                BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream(), "GBK"));//注意格式
-                while ((line = in.readLine()) != null) {
-                    lines += (line + "\n");
-                }
-                in.close();
-                proc.waitFor();
+                //从operecord表中取出Python存入的回答
+                oprecord = operatorService.queryOprecordById(fromUserName);
+                lines = oprecord.getLastAnswer();
 
                 //主动发送消息给用户
                 TextMessage text = new TextMessage();
@@ -285,7 +288,7 @@ public class VerifyWXToken extends HttpServlet{
                 activeRank.setUserId(fromUserName);
                 activeService.updateActiveItem(activeRank);
             }
-        } catch (InterruptedException | DocumentException e) {
+        } catch (DocumentException e) {
             e.printStackTrace();
         } finally {
             //out.close();

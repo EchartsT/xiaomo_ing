@@ -11,6 +11,9 @@ public class Oprecord {
     private String startTime;
     private String endTime;
     private String fileName;
+    private String lastQuestion;
+    private String lastAnswer;
+    private String messagetype;
 
     public String getOperatorId() {
         return operatorId;
@@ -65,5 +68,29 @@ public class Oprecord {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getLastQuestion() {
+        return lastQuestion;
+    }
+
+    public void setLastQuestion(String lastQuestion) {
+        this.lastQuestion = lastQuestion;
+    }
+
+    public String getLastAnswer() {
+        return lastAnswer;
+    }
+
+    public void setLastAnswer(String lastAnswer) {
+        this.lastAnswer = lastAnswer;
+    }
+
+    public String getMessagetype() {
+        return messagetype;
+    }
+
+    public void setMessagetype(String messagetype) {
+        this.messagetype = messagetype;
     }
 }

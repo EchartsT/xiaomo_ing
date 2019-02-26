@@ -37,6 +37,13 @@ public class OperatorService {
         return operatorDao.updateOprecord(oprecord)>0;
     }
 
+    public boolean updateOprecord2(Oprecord oprecord){
+        return operatorDao.updateOprecord2(oprecord)>0;
+    }
+
+    public Oprecord queryOprecordById(String userId){
+        return operatorDao.queryOprecordById(userId);
+    }
     //微信
     private WeixinDAO weixinDAO;
 
