@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -64,14 +65,16 @@ public class ManagerController {
         return modelAndView;
     }
     @RequestMapping("/updatemanager.html")
-    public ModelAndView updatemanager(HttpServletRequest request) {
+    public ModelAndView updatemanager(HttpServletRequest request) throws UnsupportedEncodingException {
         Manager manager = new Manager();
         manager.setManagerId(request.getParameter("managerId"));
-        manager.setManagerName(request.getParameter("managerName"));
+        String managerName = new String(request.getParameter("managerName").getBytes("ISO-8859-1"),"utf-8");
+        String managerStatus = new String(request.getParameter("managerStatus").getBytes("ISO-8859-1"),"utf-8");
+        manager.setManagerName(managerName);
         manager.setManagerPwd(request.getParameter("managerPwd"));
-        manager.setManagerStatus(request.getParameter("managerStatus"));
-        ModelAndView modelAndView = new ModelAndView("updatemanager");
-        modelAndView.addObject("alog", manager);
+        manager.setManagerStatus(managerStatus);
+        ModelAndView modelAndView = new ModelAndView("managerlist");
+        modelAndView.addObject("list", managerService.managerList());
         if (managerService.editMa(manager)){
             modelAndView.addObject("succ", "修改成功！");
 
@@ -89,18 +92,21 @@ public class ManagerController {
     }
 
     @RequestMapping("/manageradd_do.html")
-    public ModelAndView manageradd_do(HttpServletRequest request, String managerId, RedirectAttributes redirectAttributes){
+    public ModelAndView manageradd_do(HttpServletRequest request, String managerId, RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
         Manager manager = new Manager();
 //        manager.setManagerId(managerCommand.getManagerId());
 //        manager.setManagerName(managerCommand.getManagerName());
 //        manager.setManagerPwd(managerCommand.getManagerPwd());
 //        manager.setManagerStatus(managerCommand.getManagerStatus());
         manager.setManagerId(request.getParameter("managerId"));
-        manager.setManagerName(request.getParameter("managerName"));
+        String managerName = new String(request.getParameter("managerName").getBytes("ISO-8859-1"),"utf-8");
+        String managerStatus = new String(request.getParameter("managerStatus").getBytes("ISO-8859-1"),"utf-8");
+        manager.setManagerName(managerName);
         manager.setManagerPwd(request.getParameter("managerPwd"));
-        manager.setManagerStatus(request.getParameter("managerStatus"));
+        manager.setManagerStatus(managerStatus);
         ModelAndView modelAndView = new ModelAndView("managerlist");
         boolean flag = managerService.addMa(manager);
+//        ModelAndView modelAndView = new ModelAndView("managerlist");
         modelAndView.addObject("list", managerService.managerList());
         if(flag){
             modelAndView.addObject("succ", "添加成功！");
