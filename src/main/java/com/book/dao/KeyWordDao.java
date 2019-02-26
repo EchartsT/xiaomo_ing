@@ -18,7 +18,7 @@ public class KeyWordDao {
 
     private final static String KeyWord_LIST_SQL="SELECT * FROM keyword ORDER BY keywordNum desc";
     private final static String KeyWord_DELETE_SQL="delete from keyword where keywordId = ? ";
-    private final static String GET_KeyWord_SQL="SELECT * FROM keyword where keywordName =?";
+    private final static String GET_KeyWord_SQL="SELECT * FROM keyword where keywordName =? or keywordId = ?";
     private final static String GET_RowNum_SQL="select count(*) from keyword where keywordName = ? ";
     private final static String ADD_KeyWord_SQL="INSERT INTO keyword (keywordName,keywordNum) VALUES(?,?)";
     private final static String UPDATE_KeyWord_SQL="UPDATE keyword SET keywordNum = ? WHERE keywordName = ?";
@@ -49,9 +49,10 @@ public class KeyWordDao {
         return jdbcTemplate.update(KeyWord_DELETE_SQL,operatorId);
     }
 
+
     public ArrayList<KeyWord> matchKeyword(String searchWord){
         final ArrayList<KeyWord> list=new ArrayList<KeyWord>();
-        jdbcTemplate.query(GET_KeyWord_SQL, new Object[]{searchWord} ,new RowCallbackHandler() {
+        jdbcTemplate.query(GET_KeyWord_SQL, new Object[]{searchWord,searchWord} ,new RowCallbackHandler() {
             public void processRow(ResultSet resultSet) throws SQLException {
                 resultSet.beforeFirst();
                 while (resultSet.next()){
@@ -64,6 +65,18 @@ public class KeyWordDao {
             }
         });
         return list;
+    }
+
+    public KeyWord matchKeyword_Single(String searchWord){
+        KeyWord kw=new KeyWord();
+        jdbcTemplate.query(GET_KeyWord_SQL, new Object[]{searchWord,searchWord} ,new RowCallbackHandler() {
+            public void processRow(ResultSet resultSet) throws SQLException {
+                kw.setKeywordId(resultSet.getInt("keywordId"));
+                kw.setKeywordName(resultSet.getString("keywordName"));
+                kw.setKeywordNum(resultSet.getInt("keywordNum"));
+            }
+        });
+        return kw;
     }
 
     public int addKeyWord(KeyWord keyWord){

@@ -24,6 +24,11 @@ public class KeyWordService {
 
         return keyWordDao.matchKeyword(searchWord);
     }
+
+    public KeyWord matchKeyword_Single(String searchWord){
+
+        return keyWordDao.matchKeyword_Single(searchWord);
+    }
     public boolean addKeyWord(KeyWord keyWord){
         return keyWordDao.addKeyWord(keyWord)>0;
     }

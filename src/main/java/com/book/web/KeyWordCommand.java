@@ -21,6 +21,7 @@ public class KeyWordCommand {
 
             Process proc;
             String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\word_frequency\\StatisticalWordFrequency.py",filepath};
+           //cmd 获取显示出来的结果 不是函数return的结果
             proc = Runtime.getRuntime().exec(args);
 
             //使用缓冲流接受程序返回的结果

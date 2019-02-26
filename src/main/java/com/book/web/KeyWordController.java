@@ -1,5 +1,6 @@
 package com.book.web;
 
+import com.book.domain.KeyWord;
 import com.book.service.KeyWordService;
 import com.book.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.util.List;
 
 @Controller
 public class KeyWordController {
@@ -29,10 +30,18 @@ public class KeyWordController {
     }
     //删除对应操作记录
     @RequestMapping("/deletekeyword.html")
-    public String deleteKeyword(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String deleteKeyword(HttpServletRequest request, RedirectAttributes redirectAttributes) throws IOException {
         String operatorId = request.getParameter("keywordId");
         int res = keyWordService.deletekeyword(operatorId);
-
+        KeyWord keyWords = keyWordService.matchKeyword_Single(operatorId);
+        FileWriter fw =null;
+        File f=new File("D:\\1.txt");
+        fw = new FileWriter(f,true);
+        PrintWriter pw = new PrintWriter(fw);
+        pw.println(keyWords.getKeywordName());
+        pw.flush();
+        pw.close();
+        fw.close();
         if (res == 1) {
             redirectAttributes.addFlashAttribute("succ", "操作流水记录删除成功！");
             return "redirect:/keywordList.html";
