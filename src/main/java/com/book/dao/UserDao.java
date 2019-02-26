@@ -30,7 +30,7 @@ public class UserDao {
 
     private final static String User_Add_SQL="INSERT INTO user (userId,userName,isSubscribe,fileName) VALUES ( ?, ?  ,?,?)";
     private final static String GET_RowNum_SQL="select count(*) from user where userId = ? ";
-    private final static String ADD_User_SQL="INSERT INTO user (userId,userName,isSubscribe) VALUES(?,?,?)";
+    private final static String ADD_User_SQL="INSERT INTO user (userId,userName,isSubscribe,fileName) VALUES(?,?,?,?)";
     private final static String UPDATE_User_SQL="UPDATE user SET isSubscribe = ? WHERE userId = ?";
     private final static String UPDATE_UserChatData_SQL="UPDATE user SET chatData = ? WHERE userId = ?";
 
@@ -105,10 +105,11 @@ public class UserDao {
         String userId = user.getUserId();
         String userName = user.getUserName();
         boolean isSubscribe = user.getIsSubscribe();
+        String fileName = user.getFileName();
 
         int rowNum = jdbcTemplate.queryForObject(GET_RowNum_SQL, new Object[]{userId},Integer.class);
         if(rowNum == 0){
-            return jdbcTemplate.update(ADD_User_SQL,new Object[]{userId,userName,String.valueOf(isSubscribe)});
+            return jdbcTemplate.update(ADD_User_SQL,new Object[]{userId,userName,String.valueOf(isSubscribe),fileName});
         }
         else{
             return jdbcTemplate.update(UPDATE_User_SQL,new Object[]{String.valueOf(isSubscribe),userId});

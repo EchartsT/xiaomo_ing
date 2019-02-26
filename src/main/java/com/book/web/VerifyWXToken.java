@@ -13,10 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -276,6 +273,8 @@ public class VerifyWXToken extends HttpServlet{
 
                 //将本轮对话存入TXT文件
                 String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
+                weixinService.createTxtFile(fromUserName);
+                
                 String data = askTime + "  " + "用户："+ content + "\r\n" + answerTime + " " + "小莫："+ lines + "\r\n";
                 weixinService.writeChatInfo(filename, data);
 

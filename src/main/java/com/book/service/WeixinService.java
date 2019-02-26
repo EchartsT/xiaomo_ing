@@ -58,6 +58,7 @@ public class WeixinService {
         if (!filename.exists()) {
             filename.createNewFile();
             flag = true;
+
         }
         return flag;
     }
