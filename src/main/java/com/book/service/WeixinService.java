@@ -2,6 +2,8 @@ package com.book.service;
 
 import com.book.dao.WeixinDAO;
 import com.book.domain.AccessToken;
+import com.book.domain.Oprecord;
+import com.book.util.ApplicationContextHelper;
 import com.book.util.FileUtil;
 import net.sf.json.JSONObject;
 import com.google.gson.Gson;
@@ -12,11 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class WeixinService {
 
     private  static  String sendMessage_url="https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN";
     private  static  String getUserInfo_url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+
+    private OperatorService operatorService= ApplicationContextHelper.getBean(OperatorService.class);
 
     // 公众号向用户主动发送消息
     public void sendMessage(String accessToken,BaseMessage message){
@@ -48,7 +54,7 @@ public class WeixinService {
     }
 
      //创建聊天文件
-    public static boolean createTxtFile(String name) throws IOException {
+    public  boolean createTxtFile(String name) throws IOException {
         boolean flag = false;
         //String filenameTemp = "D:/" + name + ".txt";
        String filenameTemp = FileUtil.createDirectory()+"/"+name+ ".txt";
@@ -58,7 +64,15 @@ public class WeixinService {
         if (!filename.exists()) {
             filename.createNewFile();
             flag = true;
-
+            String fromUserName = name;
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            String askTime = df.format(new Date());
+            Oprecord oprecord = new Oprecord();
+            oprecord.setUserId(fromUserName);
+            oprecord.setOperatorId(fromUserName+askTime);
+            oprecord.setStartTime(askTime);
+            oprecord.setFileName(fromUserName + ".txt");
+            operatorService.addOprecord(oprecord);
         }
         return flag;
     }
