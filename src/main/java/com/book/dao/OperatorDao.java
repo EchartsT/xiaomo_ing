@@ -24,6 +24,7 @@ public class OperatorDao {
     private final static String GET_OP_SQL="SELECT * FROM oprecord where userId = ? or operatorId = ? ";
     private final static String GET_RowNum_SQL="select count(*) from oprecord where userId = ? ";
     private final static String ADD_Oprecord_SQL="INSERT INTO oprecord (operatorId,userId,startTime,endTime,fileName,active) VALUES(?,?,?,?,?,'0')";
+    private final static String ADD_Oprecord_AGAIN_SQL="INSERT INTO oprecord (operatorId,userId,startTime,endTime,fileName,active,messageType) VALUES(?,?,?,?,?,'0',?)";
     private final static String UPDATE_Oprecord_SQL="UPDATE oprecord SET endTime = ? WHERE userId = ?";
     private final static String UPDATE_Oprecord_SQL2="UPDATE oprecord SET lastQuestion = ?,active = '1',messagetype = ? WHERE userId = ?";
 
@@ -72,7 +73,6 @@ public class OperatorDao {
         });
         return list;
     }
-
     public int addOprecord(Oprecord oprecord){
         String userId=oprecord.getUserId();
         String operatorId = oprecord.getOperatorId();
@@ -82,6 +82,19 @@ public class OperatorDao {
         int rowNum = jdbcTemplate.queryForObject(GET_RowNum_SQL, new Object[]{userId},Integer.class);
         if(rowNum == 0){
             return jdbcTemplate.update(ADD_Oprecord_SQL,new Object[]{operatorId,userId,startTime,startTime,fileName});
+        }return 0;
+    }
+
+    public int addOprecord_again(Oprecord oprecord){
+        String userId=oprecord.getUserId();
+        String operatorId = oprecord.getOperatorId();
+        Timestamp startTime=java.sql.Timestamp.valueOf(oprecord.getStartTime());
+        String fileName = oprecord.getFileName();
+        String messageType = oprecord.getMessagetype();
+
+        int rowNum = jdbcTemplate.queryForObject(GET_RowNum_SQL, new Object[]{userId},Integer.class);
+        if(rowNum == 0){
+            return jdbcTemplate.update(ADD_Oprecord_AGAIN_SQL,new Object[]{operatorId,userId,startTime,startTime,fileName,messageType});
         }return 0;
     }
 

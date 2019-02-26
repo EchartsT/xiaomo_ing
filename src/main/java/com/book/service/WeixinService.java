@@ -3,6 +3,7 @@ package com.book.service;
 import com.book.dao.WeixinDAO;
 import com.book.domain.AccessToken;
 import com.book.domain.Oprecord;
+import com.book.domain.User;
 import com.book.util.ApplicationContextHelper;
 import com.book.util.FileUtil;
 import net.sf.json.JSONObject;
@@ -23,6 +24,7 @@ public class WeixinService {
     private  static  String getUserInfo_url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
 
     private OperatorService operatorService= ApplicationContextHelper.getBean(OperatorService.class);
+    private UserService userService= ApplicationContextHelper.getBean(UserService.class);
 
     // 公众号向用户主动发送消息
     public void sendMessage(String accessToken,BaseMessage message){
@@ -68,11 +70,14 @@ public class WeixinService {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             String askTime = df.format(new Date());
             Oprecord oprecord = new Oprecord();
+            User user = new User();
+            user = userService.queryUserById(name);
             oprecord.setUserId(fromUserName);
             oprecord.setOperatorId(fromUserName+askTime);
             oprecord.setStartTime(askTime);
             oprecord.setFileName(fromUserName + ".txt");
-            operatorService.addOprecord(oprecord);
+            oprecord.setMessagetype(user.getChatData());
+            operatorService.addOprecord_again(oprecord);
         }
         return flag;
     }

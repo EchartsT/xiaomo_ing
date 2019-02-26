@@ -33,6 +33,9 @@ public class OperatorService {
     public boolean addOprecord(Oprecord oprecord){
         return operatorDao.addOprecord(oprecord)>0;
     }
+    public boolean addOprecord_again(Oprecord oprecord){
+        return operatorDao.addOprecord_again(oprecord)>0;
+    }
     public boolean updateOprecord(Oprecord oprecord){
         return operatorDao.updateOprecord(oprecord)>0;
     }
