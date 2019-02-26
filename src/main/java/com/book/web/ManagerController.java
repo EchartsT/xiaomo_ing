@@ -49,8 +49,9 @@ public class ManagerController {
 
     //搜索
     @RequestMapping("/querymanager.html")
-    public ModelAndView queryOperatorDo(HttpServletRequest request, String searchWord) {
+    public ModelAndView queryOperatorDo(HttpServletRequest request) throws UnsupportedEncodingException {
         ModelAndView modelAndView = new ModelAndView("managerlist");
+        String searchWord = new String(request.getParameter("searchWord").getBytes("ISO-8859-1"),"utf-8");
         modelAndView.addObject("list", managerService.matchMa(searchWord));
         return modelAndView;
     }
@@ -73,9 +74,10 @@ public class ManagerController {
         manager.setManagerName(managerName);
         manager.setManagerPwd(request.getParameter("managerPwd"));
         manager.setManagerStatus(managerStatus);
+        boolean flag = managerService.editMa(manager);
         ModelAndView modelAndView = new ModelAndView("managerlist");
         modelAndView.addObject("list", managerService.managerList());
-        if (managerService.editMa(manager)){
+        if (flag){
             modelAndView.addObject("succ", "修改成功！");
 
         }else {
@@ -114,7 +116,6 @@ public class ManagerController {
             modelAndView.addObject("error", "添加失败！");
 
         }
-
         return modelAndView;
     }
 
