@@ -32,7 +32,6 @@ public class KeyWordController {
     @RequestMapping("/deletekeyword.html")
     public String deleteKeyword(HttpServletRequest request, RedirectAttributes redirectAttributes) throws IOException {
         String operatorId = request.getParameter("keywordId");
-        int res = keyWordService.deletekeyword(operatorId);
         KeyWord keyWords = keyWordService.matchKeyword_Single(operatorId);
         FileWriter fw =null;
         File f=new File("D:\\1.txt");
@@ -42,6 +41,7 @@ public class KeyWordController {
         pw.flush();
         pw.close();
         fw.close();
+        int res = keyWordService.deletekeyword(operatorId);
         if (res == 1) {
             redirectAttributes.addFlashAttribute("succ", "操作流水记录删除成功！");
             return "redirect:/keywordList.html";
