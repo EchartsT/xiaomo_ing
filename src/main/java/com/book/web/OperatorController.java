@@ -1,5 +1,7 @@
 package com.book.web;
 
+import com.book.dao.OperatorDao;
+import com.book.domain.Oprecord;
 import com.book.service.OperatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +38,10 @@ public class OperatorController {
    @RequestMapping("/deleteop.html")
    public String deleteOp(HttpServletRequest request, RedirectAttributes redirectAttributes) {
       String operatorId = request.getParameter("operatorId");
+      Oprecord oprecord = operatorService.queryOprecordById(operatorId);
+      String filePath = "D:\\apache-tomcat-7.0.84\\bin\\chatData\\" + oprecord.getUserId() +".txt";
+      File file = new File(filePath);
+      file.delete();
       int res = operatorService.deleteopList(operatorId);
 
       if (res == 1) {

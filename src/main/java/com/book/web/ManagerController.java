@@ -36,6 +36,7 @@ public class ManagerController {
     @RequestMapping("/deletemanager.html")
     public String deleteMa(HttpServletRequest request, RedirectAttributes redirectAttributes) {
        String managerId = request.getParameter("managerId");
+
        int res = managerService.deletemaList(managerId);
 
         if (res == 1) {

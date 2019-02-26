@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +41,9 @@ public class UserController {
     @RequestMapping("/deleteUser.html")
     public String deleteUser(HttpServletRequest request,RedirectAttributes redirectAttributes){
         String userId = request.getParameter("userId");
+        String filePath = "D:\\apache-tomcat-7.0.84\\bin\\chatData\\" + userId +".txt";
+        File file = new File(filePath);
+        file.delete();
         int success=userService.deleteUserList(userId);
         if(success==1){
             redirectAttributes.addFlashAttribute("succ", "删除成功！");
