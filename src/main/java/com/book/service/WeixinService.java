@@ -55,12 +55,12 @@ public class WeixinService {
         return jsonObject;
     }
 
-     //创建聊天文件
-    public  boolean createTxtFile(String name) throws IOException {
+    //创建聊天文件
+    public  boolean createTxtFile(String name,String content) throws IOException {
         boolean flag = false;
         //String filenameTemp = "D:/" + name + ".txt";
-       String filenameTemp = FileUtil.createDirectory()+"/"+name+ ".txt";
-        //String filenameTemp = "/Users/ashley/xiaomo_ing/chatData/" + name + ".txt";
+        String filenameTemp = FileUtil.createDirectory()+"/"+name+ ".txt";
+        //String filenameTemp = "/Users/ashley/吓omo_ing/擦汗atData/" + name + ".txt";
         File filename = new File(filenameTemp);
 
         if (!filename.exists()) {
@@ -70,17 +70,21 @@ public class WeixinService {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
             String askTime = df.format(new Date());
             Oprecord oprecord = new Oprecord();
-            User user = new User();
-            user = userService.queryUserById(name);
+            User user =  userService.queryUserById(name);
             oprecord.setUserId(fromUserName);
             oprecord.setOperatorId(fromUserName+askTime);
             oprecord.setStartTime(askTime);
             oprecord.setFileName(fromUserName + ".txt");
             oprecord.setMessagetype(user.getChatData());
             operatorService.addOprecord_again(oprecord);
+            if (!content.equals("1")&&!content.equals("2")){
+                oprecord.setLastQuestion(content);
+                operatorService.updateOprecord2(oprecord);
+            }
         }
         return flag;
     }
+
 
     // 写入文件
     public static void writeChatInfo(String filename, String data) throws IOException {

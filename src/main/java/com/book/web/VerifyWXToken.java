@@ -138,9 +138,6 @@ public class VerifyWXToken extends HttpServlet{
                     out.close();
                     System.out.println(message);
 
-                    //创建txt文件用于存储聊天记录
-                    weixinService.createTxtFile(fromUserName);
-
                     //在user表（用户表）中插入该用户的记录
                     String userName = userInfo.getString("nickname");
                     boolean isSubscribe = (userInfo.getInt("subscribe") == 1 ? true : false);
@@ -149,14 +146,18 @@ public class VerifyWXToken extends HttpServlet{
                     user.setIsSubscribe(isSubscribe);
                     user.setFileName(fromUserName + ".txt");
                     user.setChatData("1");
-                    userService.addUser2(user);
+                    boolean flag =  userService.addUser2(user);
+                    System.out.println(flag);
 
-                    //在oprecord表（操作流水记录表）中插入一条记录用于记录该微信用户的流水
-                    oprecord.setUserId(fromUserName);
-                    oprecord.setOperatorId(fromUserName+askTime);
-                    oprecord.setStartTime(askTime);
-                    oprecord.setFileName(fromUserName + ".txt");
-                    operatorService.addOprecord(oprecord);
+                    //创建txt文件用于存储聊天记录
+                    weixinService.createTxtFile(fromUserName,content);
+
+//                    //在oprecord表（操作流水记录表）中插入一条记录用于记录该微信用户的流水
+//                    oprecord.setUserId(fromUserName);
+//                    oprecord.setOperatorId(fromUserName+askTime);
+//                    oprecord.setStartTime(askTime);
+//                    oprecord.setFileName(fromUserName + ".txt");
+//                    operatorService.addOprecord(oprecord);
 
                     //在activerank表（活跃度排名表）中插入一条记录用于记录该微信用户的活跃度
                     activeRank.setUserId(fromUserName);
@@ -224,12 +225,12 @@ public class VerifyWXToken extends HttpServlet{
                     weixinService.writeChatInfo(alldataFilename, content + "，");
 
                     try {
-                        Thread.sleep (500) ;
+                        Thread.sleep (1000) ;
                     } catch (InterruptedException ie){
                     }
                 }else if(user.getChatData().equals("1")){
                     try {
-                        Thread.sleep (7500) ;
+                        Thread.sleep (8000) ;
                     } catch (InterruptedException ie){
                     }
                 }
@@ -273,7 +274,7 @@ public class VerifyWXToken extends HttpServlet{
 
                 //将本轮对话存入TXT文件
                 String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
-                weixinService.createTxtFile(fromUserName);
+                weixinService.createTxtFile(fromUserName,content);
                 
                 String data = askTime + "  " + "用户："+ content + "\r\n" + answerTime + " " + "小莫："+ lines + "\r\n";
                 weixinService.writeChatInfo(filename, data);

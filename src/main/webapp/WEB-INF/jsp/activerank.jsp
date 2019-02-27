@@ -133,7 +133,6 @@
                 <th>排名</th>
                 <th>用户ID</th>
                 <th>聊天次数</th>
-                <th>删除</th>
             </tr>
             </thead>
             <tbody>
@@ -143,7 +142,6 @@
                     <td>${s.count}</td>
                     <td><c:out value="${alog.userId}"></c:out></td>
                     <td><c:out value="${alog.actionTime}"></c:out></td>
-                    <td><a href="deleteac.html?userId=<c:out value="${alog.userId}"></c:out>"><button type="button" class="btn btn-danger btn-xs">删除</button></a></td>
                 </tr>
             </c:forEach>
             </tbody>
