@@ -150,7 +150,7 @@ public class VerifyWXToken extends HttpServlet{
                     System.out.println(flag);
 
                     //创建txt文件用于存储聊天记录
-                    weixinService.createTxtFile(fromUserName,content);
+                    weixinService.createTxtFile(fromUserName);
 
 //                    //在oprecord表（操作流水记录表）中插入一条记录用于记录该微信用户的流水
 //                    oprecord.setUserId(fromUserName);
@@ -237,7 +237,7 @@ public class VerifyWXToken extends HttpServlet{
 
                 //将本轮对话存入TXT文件
                 String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
-                weixinService.createTxtFile(fromUserName,content);
+                weixinService.createTxtFile2(fromUserName,content);
 
                 //从operecord表中取出Python存入的回答
                 oprecord = operatorService.queryOprecordById(fromUserName);

@@ -56,7 +56,34 @@ public class WeixinService {
     }
 
     //创建聊天文件
-    public  boolean createTxtFile(String name,String content) throws IOException {
+    public  boolean createTxtFile(String name) throws IOException {
+        boolean flag = false;
+        //String filenameTemp = "D:/" + name + ".txt";
+        String filenameTemp = FileUtil.createDirectory()+"/"+name+ ".txt";
+        //String filenameTemp = "/Users/ashley/吓omo_ing/擦汗atData/" + name + ".txt";
+        File filename = new File(filenameTemp);
+
+        if (!filename.exists()) {
+            filename.createNewFile();
+            flag = true;
+            String fromUserName = name;
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            String askTime = df.format(new Date());
+            Oprecord oprecord = new Oprecord();
+            User user =  userService.queryUserById(name);
+            user.setFileName(fromUserName + ".txt");
+            userService.updateUser_filename2(user);
+            oprecord.setUserId(fromUserName);
+            oprecord.setOperatorId(fromUserName+askTime);
+            oprecord.setStartTime(askTime);
+            oprecord.setFileName(fromUserName + ".txt");
+            oprecord.setMessagetype(user.getChatData());
+            operatorService.addOprecord_again(oprecord);
+        }
+        return flag;
+    }
+    //创建聊天文件
+    public  boolean createTxtFile2(String name,String content) throws IOException {
         boolean flag = false;
         //String filenameTemp = "D:/" + name + ".txt";
         String filenameTemp = FileUtil.createDirectory()+"/"+name+ ".txt";
