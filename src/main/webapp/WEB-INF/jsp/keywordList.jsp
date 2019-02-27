@@ -18,7 +18,7 @@
             background-color: rgb(240,242,245);
         }
     </style>
-
+   <script src="//at.alicdn.com/t/font_1061145_0hz9g8i50duo.js"></script>
 </head>
 <body>
 
@@ -64,8 +64,8 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="login.html"><span class="glyphicon glyphicon-user"></span>&nbsp;${admin.managerId}，已登录</a></li>
-                <li><a href="logout.html"><span class="glyphicon glyphicon-log-in"></span>&nbsp;退出</a></li>
+                <%--<li><a href="login.html"><span class="glyphicon glyphicon-user"></span>${admin.managerId}，已登录</a></li>--%>
+                <li><a href="logout.html" class="nav-link">退出</a></li>
             </ul>
         </div>
     </div>

@@ -29,7 +29,7 @@ public class UserController {
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
-
+//用户列表
     @RequestMapping("/userlist.html")
     public ModelAndView allUser(){
         ArrayList<User> users=userService.List();
@@ -37,7 +37,7 @@ public class UserController {
         modelAndView.addObject("users",users);
         return modelAndView;
     }
-
+//删除用户
     @RequestMapping("/deleteUser.html")
     public String deleteUser(HttpServletRequest request,RedirectAttributes redirectAttributes){
         String userId = request.getParameter("userId");
