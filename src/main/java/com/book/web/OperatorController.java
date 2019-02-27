@@ -2,7 +2,9 @@ package com.book.web;
 
 import com.book.dao.OperatorDao;
 import com.book.domain.Oprecord;
+import com.book.domain.User;
 import com.book.service.OperatorService;
+import com.book.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,10 +21,15 @@ import java.util.ArrayList;
 @Controller
 public class OperatorController {
    private OperatorService operatorService;
+   private UserService userService;
 
    @Autowired
    private void setOperatorService(OperatorService operatorService) {
       this.operatorService = operatorService;
+   }
+   @Autowired
+   private void setUserService(UserService userService) {
+      this.userService = userService;
    }
 
    //显示所有操作记录
@@ -42,6 +49,11 @@ public class OperatorController {
       String filePath = "D:\\apache-tomcat-7.0.84\\bin\\chatData\\" + oprecord.getUserId() +".txt";
       File file = new File(filePath);
       file.delete();
+
+      User user = new User();
+      user.setUserId(oprecord.getUserId());
+      userService.updateUser_filename(user);
+
       int res = operatorService.deleteopList(operatorId);
 
       if (res == 1) {

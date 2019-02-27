@@ -41,10 +41,10 @@ public class ManagerController {
 
         if (res == 1) {
             redirectAttributes.addFlashAttribute("succ", "操作流水记录删除成功！");
-            return "redirect:/managerList.html";
+            return "redirect:/managerlist.html";
         } else {
             redirectAttributes.addFlashAttribute("error", "操作流水记录删除失败！");
-            return "redirect:/managerList.html";
+            return "redirect:/managerlist.html";
         }
     }
 

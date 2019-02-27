@@ -41,17 +41,23 @@ public class UserController {
     @RequestMapping("/deleteUser.html")
     public String deleteUser(HttpServletRequest request,RedirectAttributes redirectAttributes){
         String userId = request.getParameter("userId");
+        String isSubscribe = request.getParameter("isSubscribe");
         String filePath = "D:\\apache-tomcat-7.0.84\\bin\\chatData\\" + userId +".txt";
         File file = new File(filePath);
         file.delete();
-        int success=userService.deleteUserList(userId);
-        if(success==1){
-            redirectAttributes.addFlashAttribute("succ", "删除成功！");
-            return "redirect:/userlist.html";
-        }else {
-            redirectAttributes.addFlashAttribute("error", "删除失败！");
-            return "redirect:/userlist.html";
+
+        if(isSubscribe.equals("false")){
+            int success=userService.deleteUserList(userId);
+            if(success==1){
+                redirectAttributes.addFlashAttribute("succ", "删除成功！");
+                return "redirect:/userlist.html";
+            }else {
+                redirectAttributes.addFlashAttribute("error", "删除失败！");
+                return "redirect:/userlist.html";
+            }
         }
+        redirectAttributes.addFlashAttribute("error", "不能删除订阅用户！");
+        return "redirect:/userlist.html";
     }
     @RequestMapping("/queryUser.html")
     public ModelAndView queryUser(HttpServletRequest request,RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {

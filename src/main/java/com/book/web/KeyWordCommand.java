@@ -13,14 +13,14 @@ import java.util.Map;
 public class KeyWordCommand {
     private KeyWordService keyWordService= ApplicationContextHelper.getBean(KeyWordService.class);
 
-    public void getWordsFrequency(String filepath) throws IOException {
+    public void getWordsFrequency(String filepath1,String filepath2) throws IOException {
         try {
             //执行python脚本———统计词频
             String tmpline;
             String line;
 
             Process proc;
-            String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\word_frequency\\StatisticalWordFrequency.py",filepath};
+            String[] args = new String[] {"D:\\python\\anaconda\\setupway\\python","D:\\python\\code\\word_frequency\\StatisticalWordFrequency.py",filepath1,filepath2};
            //cmd 获取显示出来的结果 不是函数return的结果
             proc = Runtime.getRuntime().exec(args);
 

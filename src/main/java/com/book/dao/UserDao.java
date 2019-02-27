@@ -33,6 +33,7 @@ public class UserDao {
     private final static String ADD_User_SQL="INSERT INTO user (userId,userName,isSubscribe,fileName) VALUES(?,?,?,?)";
     private final static String UPDATE_User_SQL="UPDATE user SET isSubscribe = ? WHERE userId = ?";
     private final static String UPDATE_UserChatData_SQL="UPDATE user SET chatData = ? WHERE userId = ?";
+    private final static String UPDATE_UserFileName_SQL="UPDATE user SET fileName = null WHERE userId = ?";
 
 
     public int addUser(User user){
@@ -128,5 +129,9 @@ public class UserDao {
 
         return jdbcTemplate.update(UPDATE_UserChatData_SQL,new Object[]{chatData,userId});
     }
+    public int updateUser_filename(User user){
+        String userId = user.getUserId();
 
+        return jdbcTemplate.update(UPDATE_UserFileName_SQL,new Object[]{userId});
+    }
 }

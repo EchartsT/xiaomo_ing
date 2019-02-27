@@ -23,7 +23,7 @@ public class KeyWordController {
     @RequestMapping("/keywordList.html")
     public ModelAndView keywordList() throws IOException {
         KeyWordCommand keyWordCommand = new KeyWordCommand();
-        keyWordCommand.getWordsFrequency(FileUtil.createDirectory()+"/"+"allchatdata.txt");
+        keyWordCommand.getWordsFrequency(FileUtil.createDirectory()+"/"+"allchatdata.txt",FileUtil.createDirectory()+"/"+"removewords.txt");
         ModelAndView modelAndView = new ModelAndView("keywordList");
         modelAndView.addObject("list", keyWordService.keywordList());
         return modelAndView;
@@ -34,7 +34,7 @@ public class KeyWordController {
         String operatorId = request.getParameter("keywordId");
         KeyWord keyWords = keyWordService.matchKeyword_Single(operatorId);
         FileWriter fw =null;
-        File f=new File("D:\\1.txt");
+        File f=new File(FileUtil.createDirectory()+"/"+"removewords.txt");
         fw = new FileWriter(f,true);
         PrintWriter pw = new PrintWriter(fw);
         pw.println(keyWords.getKeywordName());
