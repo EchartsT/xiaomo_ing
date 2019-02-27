@@ -235,6 +235,10 @@ public class VerifyWXToken extends HttpServlet{
                     }
                 }
 
+                //将本轮对话存入TXT文件
+                String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
+                weixinService.createTxtFile(fromUserName,content);
+
                 //从operecord表中取出Python存入的回答
                 oprecord = operatorService.queryOprecordById(fromUserName);
                 lines = oprecord.getLastAnswer();
@@ -272,10 +276,6 @@ public class VerifyWXToken extends HttpServlet{
                 //获取当前系统时间作为回答时间
                 String answerTime = df.format(new Date());
 
-                //将本轮对话存入TXT文件
-                String filename = FileUtil.createDirectory()+"/"+fromUserName+ ".txt";
-                weixinService.createTxtFile(fromUserName,content);
-                
                 String data = askTime + "  " + "用户："+ content + "\r\n" + answerTime + " " + "小莫："+ lines + "\r\n";
                 weixinService.writeChatInfo(filename, data);
 

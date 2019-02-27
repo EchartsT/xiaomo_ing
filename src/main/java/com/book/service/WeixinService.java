@@ -71,6 +71,8 @@ public class WeixinService {
             String askTime = df.format(new Date());
             Oprecord oprecord = new Oprecord();
             User user =  userService.queryUserById(name);
+            user.setFileName(fromUserName + ".txt");
+            userService.updateUser_filename2(user);
             oprecord.setUserId(fromUserName);
             oprecord.setOperatorId(fromUserName+askTime);
             oprecord.setStartTime(askTime);

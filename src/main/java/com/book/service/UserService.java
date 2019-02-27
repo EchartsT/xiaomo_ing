@@ -48,4 +48,7 @@ public class UserService {
     public boolean updateUser_filename(User user){
         return userDao.updateUser_filename(user)>0;
     }
+    public boolean updateUser_filename2(User user){
+        return userDao.updateUser_filename2(user)>0;
+    }
 }

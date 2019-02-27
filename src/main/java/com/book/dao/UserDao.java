@@ -34,6 +34,7 @@ public class UserDao {
     private final static String UPDATE_User_SQL="UPDATE user SET isSubscribe = ? WHERE userId = ?";
     private final static String UPDATE_UserChatData_SQL="UPDATE user SET chatData = ? WHERE userId = ?";
     private final static String UPDATE_UserFileName_SQL="UPDATE user SET fileName = null WHERE userId = ?";
+    private final static String UPDATE_UserFileName_SQL2="UPDATE user SET fileName = ? WHERE userId = ?";
 
 
     public int addUser(User user){
@@ -133,5 +134,11 @@ public class UserDao {
         String userId = user.getUserId();
 
         return jdbcTemplate.update(UPDATE_UserFileName_SQL,new Object[]{userId});
+    }
+    public int updateUser_filename2(User user){
+        String userId = user.getUserId();
+        String fileName = user.getFileName();
+
+        return jdbcTemplate.update(UPDATE_UserFileName_SQL2,new Object[]{fileName,userId});
     }
 }
