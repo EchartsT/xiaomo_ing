@@ -240,7 +240,9 @@ public class VerifyWXToken extends HttpServlet{
                 weixinService.createTxtFile2(fromUserName,content);
 
                 //从operecord表中取出Python存入的回答
-                oprecord = operatorService.queryOprecordById(fromUserName);
+                while(oprecord.getLastAnswer() == null){
+                    oprecord = operatorService.queryOprecordById(fromUserName);
+                }
                 lines = oprecord.getLastAnswer();
 
                 //主动发送消息给用户
