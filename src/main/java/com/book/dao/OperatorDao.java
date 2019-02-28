@@ -57,7 +57,7 @@ public class OperatorDao {
 
     public ArrayList<Oprecord> matchOP(String searchWord){
         final ArrayList<Oprecord> list=new ArrayList<Oprecord>();
-        jdbcTemplate.query(GET_OP_SQL, new Object[]{searchWord} ,new RowCallbackHandler() {
+        jdbcTemplate.query(GET_OP_SQL, new Object[]{searchWord,searchWord} ,new RowCallbackHandler() {
             public void processRow(ResultSet resultSet) throws SQLException {
                 resultSet.beforeFirst();
                 while (resultSet.next()){

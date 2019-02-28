@@ -132,7 +132,7 @@
 <div class="panel panel-default" style="width: 90%;margin-left: 5%">
     <div class="panel-heading">
         <h3 class="panel-title">
-            活跃度排名
+            关键字排名
         </h3>
     </div>
     <div class="panel-body">
